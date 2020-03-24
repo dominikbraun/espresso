@@ -1,0 +1,17 @@
+version: 2.1
+
+executors:
+  go-container:
+    docker:
+      - image: circleci/golang:1.12
+        environment:
+          CGO_ENABLED: 0
+          G111MODULE: "on"
+
+jobs:
+  # Test, build and delivery jobs
+
+workflows:
+  version: 2
+  espresso:
+    # Test, build and delivery jobs
