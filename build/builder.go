@@ -23,6 +23,7 @@ type Builder struct {
 	model    *Site
 	settings *settings.Site
 	parser   parser.Parser
+	mutex    *sync.Mutex
 }
 
 func NewBuilder(settings *settings.Site, parser parser.Parser) *Builder {
@@ -30,37 +31,28 @@ func NewBuilder(settings *settings.Site, parser parser.Parser) *Builder {
 		model:    &Site{},
 		settings: settings,
 		parser:   parser,
+		mutex:    &sync.Mutex{},
 	}
 	return &b
 }
 
 func (b *Builder) Receive(files <-chan string) {
 	var wg sync.WaitGroup
-	results := make(chan *model.ArticlePage)
 
 	for i := 0; i < numWorkers; i++ {
 		wg.Add(1)
-		go b.processFiles(files, results, &wg)
+		go b.processFiles(files, &wg)
 	}
-
-	go b.processResults(results)
 
 	wg.Wait()
-	close(results)
 }
 
-func (b *Builder) processFiles(files <-chan string, results chan<- *model.ArticlePage, wg *sync.WaitGroup) {
+func (b *Builder) processFiles(files <-chan string, wg *sync.WaitGroup) {
 	for file := range files {
 		page, _ := b.buildPage(file)
-		results <- page
+		b.registerPage(page)
 	}
 	wg.Done()
-}
-
-func (b *Builder) processResults(results <-chan *model.ArticlePage) {
-	for page := range results {
-		fmt.Println("Adding \"" + page.Article.Title + "\" to model")
-	}
 }
 
 func (b *Builder) buildPage(file string) (*model.ArticlePage, error) {
@@ -79,4 +71,11 @@ func (b *Builder) buildPage(file string) (*model.ArticlePage, error) {
 	}
 
 	return &page, nil
+}
+
+func (b *Builder) registerPage(page *model.ArticlePage) {
+	b.mutex.Lock()
+	defer b.mutex.Unlock()
+
+	fmt.Println("Adding \"" + page.Article.Title + "\" to model")
 }
