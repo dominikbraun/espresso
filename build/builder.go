@@ -4,6 +4,11 @@ import (
 	"fmt"
 	"github.com/dominikbraun/espresso/model"
 	"github.com/dominikbraun/espresso/settings"
+	"sync"
+)
+
+const (
+	numWorkers int = 5
 )
 
 type Site struct {
@@ -17,11 +22,6 @@ type Builder struct {
 	settings *settings.Site
 }
 
-type Subject struct {
-	Route   string
-	Article *model.Article
-}
-
 func NewBuilder(settings *settings.Site) *Builder {
 	b := Builder{
 		model:    &Site{},
@@ -30,6 +30,35 @@ func NewBuilder(settings *settings.Site) *Builder {
 	return &b
 }
 
-func (b *Builder) Add(subject *Subject) {
-	fmt.Println("Adding build subject")
+func (b *Builder) Receive(files <-chan string) {
+	var wg sync.WaitGroup
+	results := make(chan *model.ArticlePage)
+
+	for i := 0; i < numWorkers; i++ {
+		wg.Add(1)
+		go b.processFiles(files, results, &wg)
+	}
+
+	go b.processResults(results)
+
+	wg.Wait()
+	close(results)
+}
+
+func (b *Builder) processFiles(files <-chan string, results chan<- *model.ArticlePage, wg *sync.WaitGroup) {
+	for file := range files {
+		page, _ := b.buildPage(file)
+		results <- page
+	}
+	wg.Done()
+}
+
+func (b *Builder) processResults(results <-chan *model.ArticlePage) {
+	for _ = range results {
+		fmt.Println("Adding to model")
+	}
+}
+
+func (b *Builder) buildPage(file string) (*model.ArticlePage, error) {
+	return &model.ArticlePage{}, nil
 }
