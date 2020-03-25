@@ -8,5 +8,5 @@ type page struct {
 
 type ArticlePage struct {
 	page
-	Article *Article
+	Article Article
 }

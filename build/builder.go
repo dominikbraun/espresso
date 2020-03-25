@@ -3,7 +3,9 @@ package build
 import (
 	"fmt"
 	"github.com/dominikbraun/espresso/model"
+	"github.com/dominikbraun/espresso/parser"
 	"github.com/dominikbraun/espresso/settings"
+	"io/ioutil"
 	"sync"
 )
 
@@ -20,12 +22,14 @@ type Site struct {
 type Builder struct {
 	model    *Site
 	settings *settings.Site
+	parser   parser.Parser
 }
 
-func NewBuilder(settings *settings.Site) *Builder {
+func NewBuilder(settings *settings.Site, parser parser.Parser) *Builder {
 	b := Builder{
 		model:    &Site{},
 		settings: settings,
+		parser:   parser,
 	}
 	return &b
 }
@@ -54,11 +58,25 @@ func (b *Builder) processFiles(files <-chan string, results chan<- *model.Articl
 }
 
 func (b *Builder) processResults(results <-chan *model.ArticlePage) {
-	for _ = range results {
-		fmt.Println("Adding to model")
+	for page := range results {
+		fmt.Println("Adding \"" + page.Article.Title + "\" to model")
 	}
 }
 
 func (b *Builder) buildPage(file string) (*model.ArticlePage, error) {
-	return &model.ArticlePage{}, nil
+	source, err := ioutil.ReadFile(file)
+	if err != nil {
+		return &model.ArticlePage{}, nil
+	}
+
+	article, err := b.parser.ParseArticle(source)
+	if err != nil {
+		return &model.ArticlePage{}, nil
+	}
+
+	page := model.ArticlePage{
+		Article: article,
+	}
+
+	return &page, nil
 }

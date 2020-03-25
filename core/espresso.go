@@ -15,15 +15,13 @@ type Espresso struct {
 	buildPath   string
 	contentPath string
 	builder     *build.Builder
-	parser      parser.Parser
 }
 
 func NewEspresso(buildPath string, settings *settings.Site, parser parser.Parser) *Espresso {
 	e := Espresso{
 		buildPath:   buildPath,
 		contentPath: buildPath + contentDir,
-		builder:     build.NewBuilder(settings),
-		parser:      parser,
+		builder:     build.NewBuilder(settings, parser),
 	}
 
 	return &e
