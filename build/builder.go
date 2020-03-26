@@ -1,11 +1,11 @@
 package build
 
 import (
-	"fmt"
 	"github.com/dominikbraun/espresso/model"
 	"github.com/dominikbraun/espresso/parser"
 	"github.com/dominikbraun/espresso/settings"
 	"io/ioutil"
+	"path/filepath"
 	"sync"
 )
 
@@ -15,7 +15,7 @@ const (
 
 type Site struct {
 	Nav    *model.Nav
-	Pages  map[string][]*model.ArticlePage
+	Routes map[string][]*model.ArticlePage
 	Footer *model.Footer
 }
 
@@ -28,7 +28,9 @@ type Builder struct {
 
 func NewBuilder(settings *settings.Site, parser parser.Parser) *Builder {
 	b := Builder{
-		model:    &Site{},
+		model: &Site{
+			Routes: make(map[string][]*model.ArticlePage),
+		},
 		settings: settings,
 		parser:   parser,
 		mutex:    &sync.Mutex{},
@@ -66,16 +68,15 @@ func (b *Builder) buildPage(file string) (*model.ArticlePage, error) {
 		return &model.ArticlePage{}, nil
 	}
 
-	page := model.ArticlePage{
-		Article: article,
-	}
+	route := filepath.Dir(file)
+	page := model.NewArticlePage(route, article)
 
-	return &page, nil
+	return page, nil
 }
 
 func (b *Builder) registerPage(page *model.ArticlePage) {
 	b.mutex.Lock()
 	defer b.mutex.Unlock()
 
-	fmt.Println("Adding \"" + page.Article.Title + "\" to model")
+	b.model.Routes[page.Route] = append(b.model.Routes[page.Route], page)
 }
