@@ -9,14 +9,14 @@
 
 Espresso is a Static Site Generator designed for Markdown-based content with focus on simplicity and performance.
 
-## <img src="https://sternentstehung.de/espresso-dot.png"> Features
+## <img src="https://sternentstehung.de/espresso-ssg-dot.png"> Features
 
 * Flexibility: Create and provide your own Espresso templates
 * Simplicity: Build your static site with a single command
 * Zero Configuration: Provide a configuration only if you want to
 * Performance: Render thousands of articles in seconds
 
-## <img src="https://sternentstehung.de/espresso-dot.png"> Installation
+## <img src="https://sternentstehung.de/espresso-ssg-dot.png"> Installation
 
 Espresso is shipped as a single binary. Download the [latest release](https://github.com/dominikbraun/espresso/releases)
 and copy the binary into ...
