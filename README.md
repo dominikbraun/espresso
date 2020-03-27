@@ -9,14 +9,14 @@
 
 Espresso is a Static Site Generator designed for Markdown-based content with focus on simplicity and performance.
 
-### :coffee: Features
+## :coffee: Features
 
 * Flexibility: Create and provide your own Espresso templates
 * Simplicity: Build your static site with a single command
 * Zero Configuration: Provide a configuration only if you want to
 * Performance: Render thousands of articles in seconds
 
-### :coffee: Installation
+## :coffee: Installation
 
 Espresso is shipped as a single binary. Download the [latest release](https://github.com/dominikbraun/espresso/releases)
 and copy the binary into ...
