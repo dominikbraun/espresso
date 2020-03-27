@@ -35,6 +35,7 @@ func (e *Espresso) RunBuild() error {
 	}()
 
 	e.builder.Receive(files)
+	e.builder.GenerateModel()
 
 	return nil
 }
