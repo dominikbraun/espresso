@@ -1,4 +1,4 @@
-![Espresso Static Site Generator](https://sternentstehung.de/espressossg-readme.png)
+![Espresso Static Site Generator](https://sternentstehung.de/espressossg-logo.png)
 <br /><br />
 [![CircleCI](https://circleci.com/gh/dominikbraun/cleanup.svg?style=shield)](https://circleci.com/gh/dominikbraun/cleanup)
 [![Go Report Card](https://goreportcard.com/badge/github.com/dominikbraun/cleanup)](https://goreportcard.com/report/github.com/dominikbraun/cleanup)
