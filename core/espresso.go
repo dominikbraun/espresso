@@ -1,3 +1,5 @@
+// Package core provides the entry-point functions for all Espresso
+// commands and ties together the individual Espresso components.
 package core
 
 import (
@@ -11,6 +13,8 @@ const (
 	contentDir string = "/content"
 )
 
+// RunBuild performs a website build based on content files and settings
+// stored in the build path, rendering a complete static website.
 func RunBuild(buildPath string, settings *settings.Site) error {
 	files := make(chan string)
 	contentPath := buildPath + contentDir

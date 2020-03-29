@@ -1,3 +1,5 @@
+// Package build provides all functionality required for performing a
+// build from reading content files to modelling the static site.
 package build
 
 import (
@@ -8,12 +10,16 @@ import (
 	"sync"
 )
 
+// builder is the type used for performing the actual build. It knows
+// the current build context and generates the entire site model which
+// can then be rendered to a static site.
 type builder struct {
 	ctx   *Context
 	model *Site
 	mutex *sync.Mutex
 }
 
+// newBuilder creates a builder instance that utilizes the build context.
 func newBuilder(ctx *Context) *builder {
 	b := builder{
 		ctx:   ctx,
@@ -23,6 +29,12 @@ func newBuilder(ctx *Context) *builder {
 	return &b
 }
 
+// buildPage attempts to generate a model.Page from a file. This is done
+// by reading the file, parsing its content and building a page model. The
+// page is automatically added to the builder's site model.
+//
+// buildPage is safe for concurrent invocation. The file path must contain
+// the build path.
 func (b *builder) buildPage(file string) error {
 	source, err := ioutil.ReadFile(file)
 	if err != nil {
@@ -47,6 +59,33 @@ func (b *builder) buildPage(file string) error {
 		},
 		Article: article,
 	})
+
+	return nil
+}
+
+// buildNav attempts to create a model.Nav from the existing pages that
+// have to be built and registered first, meaning that buildNav must be
+// called after all buildPage calls have finished.
+//
+// buildNav takes the site settings into account and overrides the nav if
+// this is specified in the site settings.
+func (b *builder) buildNav() error {
+	nav := &model.Nav{
+		Brand: b.ctx.Settings.Name,
+		Items: make([]model.NavItem, 0),
+	}
+
+	b.model.walkRoutes(func(r *route) {
+		for seg, _ := range r.children {
+			item := model.NavItem{
+				Label:  strings.Title(seg),
+				Target: seg,
+			}
+			nav.Items = append(nav.Items, item)
+		}
+	}, 1)
+
+	b.model.nav = nav
 
 	return nil
 }
