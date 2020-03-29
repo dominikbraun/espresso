@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/dominikbraun/espresso/core"
-	"github.com/dominikbraun/espresso/parser"
 	"github.com/dominikbraun/espresso/settings"
 	"github.com/spf13/cobra"
 	"log"
@@ -32,9 +31,7 @@ func main() {
 				return err
 			}
 
-			espresso := core.NewEspresso(buildPath, &s, parser.NewMarkdown())
-
-			return espresso.RunBuild()
+			return core.RunBuild(buildPath, &s)
 		},
 	}
 
