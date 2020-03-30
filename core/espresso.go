@@ -1,40 +1,46 @@
+// Package core provides the entry-point functions for all Espresso
+// commands and ties together the individual Espresso components.
 package core
 
 import (
 	"github.com/dominikbraun/espresso/build"
 	"github.com/dominikbraun/espresso/filesystem"
 	"github.com/dominikbraun/espresso/parser"
+	"github.com/dominikbraun/espresso/render"
 	"github.com/dominikbraun/espresso/settings"
+	"path/filepath"
 )
 
 const (
-	contentDir string = "/content"
+	contentDir  string = "content"
+	templateDir string = "templates"
+	assetDir    string = "assets"
+	targetDir   string = "target"
 )
 
-type Espresso struct {
-	buildPath   string
-	contentPath string
-	builder     *build.Builder
-}
-
-func NewEspresso(buildPath string, settings *settings.Site, parser parser.Parser) *Espresso {
-	e := Espresso{
-		buildPath:   buildPath,
-		contentPath: buildPath + contentDir,
-		builder:     build.NewBuilder(settings, parser),
-	}
-
-	return &e
-}
-
-func (e *Espresso) RunBuild() error {
+// RunBuild performs a website build based on content files and settings
+// stored in the build path, rendering a complete static website.
+func RunBuild(buildPath string, settings *settings.Site) error {
 	files := make(chan string)
+	contentPath := filepath.Join(buildPath, contentDir)
 
 	go func() {
-		_ = filesystem.Stream(e.contentPath, filesystem.MarkdownOnly, files)
+		_ = filesystem.Stream(contentPath, filesystem.MarkdownOnly, files)
 	}()
 
-	e.builder.Receive(files)
+	site := build.Run(build.Context{
+		BuildPath: buildPath,
+		Settings:  settings,
+		Parser:    parser.NewMarkdown(),
+	}, files)
+
+	if err := render.AsWebsite(render.Context{
+		TemplateDir: filepath.Join(buildPath, templateDir),
+		AssetDir:    filepath.Join(buildPath, assetDir),
+		TargetDir:   filepath.Join(buildPath, targetDir),
+	}, site); err != nil {
+		return err
+	}
 
 	return nil
 }
