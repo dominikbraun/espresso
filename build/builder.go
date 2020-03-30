@@ -85,8 +85,8 @@ func (b *builder) buildNav() error {
 	}
 
 	if !b.ctx.Settings.Nav.Override {
-		b.model.walkRoutes(func(r *route) {
-			for seg, _ := range r.children {
+		b.model.WalkRoutes(func(r *Route) {
+			for seg, _ := range r.Children {
 				item := model.NavItem{
 					Label:  strings.Title(seg),
 					Target: seg,

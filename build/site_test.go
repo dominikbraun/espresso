@@ -7,6 +7,8 @@ import (
 	"testing"
 )
 
+// TestRegisterPage tests Site.registerPage. This test will register
+// two custom pages and check if the routes have been created.
 func TestRegisterPage(t *testing.T) {
 	site := newSite()
 
@@ -26,15 +28,15 @@ func TestRegisterPage(t *testing.T) {
 		Article: model.Article{},
 	})
 
-	if _, ok := site.root.children["content"]; !ok {
+	if _, ok := site.root.Children["content"]; !ok {
 		t.Errorf("Could not find %s segment", "content")
 	}
 
-	if _, ok := site.root.children["content"].children["coffee"]; !ok {
+	if _, ok := site.root.Children["content"].Children["coffee"]; !ok {
 		t.Errorf("Could not find %s segment", "coffee")
 	}
 
-	if len(site.root.children["content"].children["coffee"].pages) < 1 {
+	if len(site.root.Children["content"].Children["coffee"].Pages) < 1 {
 		t.Errorf("Could not find page under %s", "content/coffee")
 	}
 }

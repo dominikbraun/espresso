@@ -8,6 +8,8 @@ import (
 	"testing"
 )
 
+// defaultBuilder creates a builder instance and initializes it with
+// a generic build context that utilizes a Markdown parser.
 func defaultBuilder() *builder {
 	builder := newBuilder(Context{
 		BuildPath: ".",
@@ -17,10 +19,14 @@ func defaultBuilder() *builder {
 	return builder
 }
 
+// fail lets a provided testing fail. The corresponding error message
+// indicates the expected result and the actual value.
 func fail(t *testing.T, run int, expected, got string) {
 	t.Errorf("%v. test: Exptected %s, got %s", run, expected, got)
 }
 
+// TestBuildPages tests builder.buildPage. At the moment, the page path,
+// page ID, article title and first article tag are tested.
 func TestBuildPage(t *testing.T) {
 	builder := defaultBuilder()
 
