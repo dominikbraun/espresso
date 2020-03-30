@@ -12,7 +12,11 @@ type Site struct {
 		Override bool
 	}
 	Footer struct {
-		Text string
+		Text  string
+		Items []struct {
+			Label  string
+			Target string
+		}
 	}
 }
 

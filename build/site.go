@@ -27,8 +27,8 @@ type Site struct {
 //			}
 //	}
 //
-// The root field of Site is considered as the root route that holds
-// all sub-routes: "/blog" would be a child route of the site's root.
+// The root field of Site is considered as the root route that holds all
+// sub-routes: "/blog" would be a child route of the site's root.
 type route struct {
 	pages    []*model.ArticlePage
 	children map[string]*route

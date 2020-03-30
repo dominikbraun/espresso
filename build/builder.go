@@ -14,13 +14,13 @@ import (
 // the current build context and generates the entire site model which
 // can then be rendered to a static site.
 type builder struct {
-	ctx   *Context
+	ctx   Context
 	model *Site
 	mutex *sync.Mutex
 }
 
 // newBuilder creates a builder instance that utilizes the build context.
-func newBuilder(ctx *Context) *builder {
+func newBuilder(ctx Context) *builder {
 	b := builder{
 		ctx:   ctx,
 		model: newSite(),
@@ -75,17 +75,46 @@ func (b *builder) buildNav() error {
 		Items: make([]model.NavItem, 0),
 	}
 
-	b.model.walkRoutes(func(r *route) {
-		for seg, _ := range r.children {
-			item := model.NavItem{
-				Label:  strings.Title(seg),
-				Target: seg,
-			}
-			nav.Items = append(nav.Items, item)
+	for _, i := range b.ctx.Settings.Nav.Items {
+		item := model.NavItem{
+			Label:  i.Label,
+			Target: i.Target,
 		}
-	}, 1)
+		nav.Items = append(nav.Items, item)
+	}
+
+	if !b.ctx.Settings.Nav.Override {
+		b.model.walkRoutes(func(r *route) {
+			for seg, _ := range r.children {
+				item := model.NavItem{
+					Label:  strings.Title(seg),
+					Target: seg,
+				}
+				nav.Items = append(nav.Items, item)
+			}
+		}, 1)
+	}
 
 	b.model.nav = nav
+	return nil
+}
 
+// buildFooter attempts to create a model.Footer under consideration of
+// user-defined site settings. It is independent from any site pages.
+func (b *builder) buildFooter() error {
+	footer := &model.Footer{
+		Text:  b.ctx.Settings.Footer.Text,
+		Items: make([]model.FooterItem, 0),
+	}
+
+	for _, i := range b.ctx.Settings.Footer.Items {
+		item := model.FooterItem{
+			Label:  i.Label,
+			Target: i.Target,
+		}
+		footer.Items = append(footer.Items, item)
+	}
+
+	b.model.footer = footer
 	return nil
 }

@@ -23,7 +23,7 @@ type Context struct {
 // Run starts new build with a given build context. It accepts a read-only
 // channel for all content files that have to be included in the build and
 // returns a build.Site model that can be used for rendering the website.
-func Run(ctx *Context, files <-chan string) *Site {
+func Run(ctx Context, files <-chan string) *Site {
 	builder := newBuilder(ctx)
 	var wg sync.WaitGroup
 
