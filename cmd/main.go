@@ -1,3 +1,5 @@
+// Package main provides the Espresso commands, parses the CLI input and
+// calls the appropriate Espresso core functions for further processing.
 package main
 
 import (
@@ -11,6 +13,7 @@ const (
 	settingsFile string = "site"
 )
 
+// func main builds all CLI commands and processes the CLI input.
 func main() {
 	espressoCmd := &cobra.Command{
 		Use: "espresso",
