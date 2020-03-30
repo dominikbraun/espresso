@@ -4,7 +4,6 @@ package build
 
 import (
 	"github.com/dominikbraun/espresso/model"
-	"io/ioutil"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -29,38 +28,40 @@ func newBuilder(ctx Context) *builder {
 	return &b
 }
 
-// buildPage attempts to generate a model.Page from a file. This is done
-// by reading the file, parsing its content and building a page model. The
-// page is automatically added to the builder's site model.
+// buildPage attempts to generate a model.Page from a []byte. This is done
+// by parsing its contents and building a page model which can be registered
+// afterwards. The file parameter indicates the original file path.
 //
 // buildPage is safe for concurrent invocation. The file path must contain
 // the build path.
-func (b *builder) buildPage(file string) error {
-	source, err := ioutil.ReadFile(file)
-	if err != nil {
-		return err
-	}
-
+func (b *builder) buildPage(source []byte, file string) (*model.ArticlePage, error) {
 	article, err := b.ctx.Parser.ParseArticle(source)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	route := filepath.Dir(file)
+	route := filepath.ToSlash(filepath.Dir(file))
 	id := strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))
 
-	b.mutex.Lock()
-	defer b.mutex.Unlock()
-
-	b.model.registerPage(&model.ArticlePage{
+	page := &model.ArticlePage{
 		Page: model.Page{
 			Path: route,
 			ID:   id,
 		},
 		Article: article,
-	})
+	}
 
-	return nil
+	return page, nil
+}
+
+// registerPage registers a page model to the builder's site model. This
+// page model can be retrieved using buildPage for instance.
+//
+// registerPage is safe for concurrent invocation.
+func (b *builder) registerPage(page *model.ArticlePage) {
+	b.mutex.Lock()
+	defer b.mutex.Unlock()
+	b.model.registerPage(page)
 }
 
 // buildNav attempts to create a model.Nav from the existing pages that

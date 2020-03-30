@@ -4,7 +4,6 @@ package build
 
 import (
 	"github.com/dominikbraun/espresso/model"
-	"os"
 	"strings"
 )
 
@@ -49,7 +48,7 @@ func newSite() *Site {
 // stored in page.Path. This path must not end with a trailing slash.
 func (s *Site) registerPage(page *model.ArticlePage) {
 	node := &s.root
-	segments := strings.Split(page.Path, string(os.PathSeparator))
+	segments := strings.Split(page.Path, "/")
 
 	for i, seg := range segments {
 		if _, exists := node.children[seg]; !exists {

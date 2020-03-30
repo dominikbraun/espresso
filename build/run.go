@@ -5,6 +5,7 @@ package build
 import (
 	"github.com/dominikbraun/espresso/parser"
 	"github.com/dominikbraun/espresso/settings"
+	"io/ioutil"
 	"sync"
 )
 
@@ -45,7 +46,9 @@ func Run(ctx Context, files <-chan string) *Site {
 // WaitGroup counter by one after all received files have been built.
 func processQueue(builder *builder, files <-chan string, wg *sync.WaitGroup) {
 	for file := range files {
-		_ = builder.buildPage(file)
+		source, _ := ioutil.ReadFile(file)
+		page, _ := builder.buildPage(source, file)
+		builder.registerPage(page)
 	}
 	wg.Done()
 }
