@@ -8,7 +8,6 @@ import (
 )
 
 const (
-	settingsPath string = "."
 	settingsFile string = "site"
 )
 
@@ -27,7 +26,7 @@ func main() {
 			buildPath := args[0]
 			var s settings.Site
 
-			if err := settings.FromFile(settingsPath, settingsFile, &s); err != nil {
+			if err := settings.FromFile(buildPath, settingsFile, &s); err != nil {
 				return err
 			}
 

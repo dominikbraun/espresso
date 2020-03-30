@@ -11,9 +11,9 @@ import (
 // Site represents the actual website. It is a generic data model that
 // holds all components and pages and can be rendered to a static site.
 type Site struct {
-	nav    *model.Nav
+	Nav    *model.Nav
 	root   route
-	footer *model.Footer
+	Footer *model.Footer
 }
 
 // route represents a website route. Each route can have multiple pages

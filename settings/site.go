@@ -24,5 +24,9 @@ func FromFile(path, filename string, dest interface{}) error {
 	viper.SetConfigName(filename)
 	viper.AddConfigPath(path)
 
+	if err := viper.ReadInConfig(); err != nil {
+		return err
+	}
+
 	return viper.Unmarshal(dest)
 }

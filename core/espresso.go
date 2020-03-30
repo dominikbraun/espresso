@@ -23,7 +23,7 @@ func RunBuild(buildPath string, settings *settings.Site) error {
 		_ = filesystem.Stream(contentPath, filesystem.MarkdownOnly, files)
 	}()
 
-	build.Run(build.Context{
+	_ = build.Run(build.Context{
 		BuildPath: buildPath,
 		Settings:  settings,
 		Parser:    parser.NewMarkdown(),

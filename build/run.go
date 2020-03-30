@@ -35,6 +35,8 @@ func Run(ctx Context, files <-chan string) *Site {
 	wg.Wait()
 
 	_ = builder.buildNav()
+	_ = builder.buildFooter()
+
 	return builder.model
 }
 

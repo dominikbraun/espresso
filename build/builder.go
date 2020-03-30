@@ -67,7 +67,7 @@ func (b *builder) buildPage(file string) error {
 // have to be built and registered first, meaning that buildNav must be
 // called after all buildPage calls have finished.
 //
-// buildNav takes the site settings into account and overrides the nav if
+// buildNav takes the site settings into account and overrides the Nav if
 // this is specified in the site settings.
 func (b *builder) buildNav() error {
 	nav := &model.Nav{
@@ -95,7 +95,7 @@ func (b *builder) buildNav() error {
 		}, 1)
 	}
 
-	b.model.nav = nav
+	b.model.Nav = nav
 	return nil
 }
 
@@ -115,6 +115,6 @@ func (b *builder) buildFooter() error {
 		footer.Items = append(footer.Items, item)
 	}
 
-	b.model.footer = footer
+	b.model.Footer = footer
 	return nil
 }
