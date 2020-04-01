@@ -25,29 +25,50 @@ type Context struct {
 func AsWebsite(ctx Context, site *build.Site) error {
 	site.WalkRoutes(func(r *build.Route) {
 		for _, page := range r.Pages {
-			_ = renderPage(&ctx, page)
+			_ = renderArticlePage(&ctx, page)
 		}
 	}, -1)
 
 	return nil
 }
 
-// renderPage renders a particular page model using the respective
-// template for the page type. The directory where the template will
-// be rendered to is determined by the page path.
-func renderPage(ctx *Context, page *model.ArticlePage) error {
+// renderArticlePage renders a given ArticlePage as an HTML file.
+func renderArticlePage(ctx *Context, page *model.ArticlePage) error {
 	pagePath := filepath.Join(ctx.TargetDir, page.Path, page.ID)
 
-	if err := filesystem.CreateDir(pagePath, true); err != nil {
+	if err := renderPage(ctx, pagePath, template.Article, page); err != nil {
 		return err
 	}
 
-	handle, err := filesystem.CreateFile(filepath.Join(pagePath, indexFile))
+	return nil
+}
+
+// renderArticleListPage renders a given ArticleListPage as an HTML
+// file.
+func renderArticleListPage(ctx *Context, page *model.ArticleListPage) error {
+	pagePath := filepath.Join(ctx.TargetDir, page.Path)
+
+	if err := renderPage(ctx, pagePath, template.ArticleList, page); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// renderPage is the common function for rendering any page model. It
+// creates a directory structure corresponding to the page path and
+// renders the specified template file into this path as `index.html`.
+func renderPage(ctx *Context, path, tpl string, data interface{}) error {
+	if err := filesystem.CreateDir(path, true); err != nil {
+		return err
+	}
+
+	handle, err := filesystem.CreateFile(filepath.Join(path, indexFile))
 	if err != nil {
 		return err
 	}
 
-	tplPath := filepath.Join(ctx.TemplateDir, template.Article)
+	tplPath := filepath.Join(ctx.TemplateDir, tpl)
 
-	return template.Render(tplPath, page.Article, handle)
+	return template.Render(tplPath, data, handle)
 }
