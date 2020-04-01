@@ -4,6 +4,7 @@ package build
 
 import (
 	"github.com/dominikbraun/espresso/model"
+	"path/filepath"
 	"strings"
 )
 
@@ -30,6 +31,7 @@ type Site struct {
 // sub-routes: "/blog" would be a child route of the site's root.
 type Route struct {
 	Pages    []*model.ArticlePage
+	ListPage *model.ArticleListPage
 	Children map[string]*Route
 }
 
@@ -44,23 +46,43 @@ func newSite() *Site {
 	return &s
 }
 
+// newRoute creates and initializes a new Route instance.
+func newRoute() *Route {
+	r := Route{
+		Pages: make([]*model.ArticlePage, 0),
+		ListPage: &model.ArticleListPage{
+			Page:     model.Page{},
+			Articles: make([]*model.Article, 0),
+		},
+		Children: make(map[string]*Route),
+	}
+	return &r
+}
+
 // registerPage registers a given page under the route (path) that is
 // stored in page.Path. This path must not end with a trailing slash.
+//
+// If the route doesn't exist yet, all of its required child-routes will
+// be created until the entire page path is depicted.
 func (s *Site) registerPage(page *model.ArticlePage) {
 	node := &s.root
 	segments := strings.Split(page.Path, "/")
 
 	for i, seg := range segments {
+		// If the child route (identified by the segment) doesn't exist,
+		// create a new route under the current segment key.
 		if _, exists := node.Children[seg]; !exists {
-			node.Children[seg] = &Route{
-				Pages:    make([]*model.ArticlePage, 0),
-				Children: make(map[string]*Route),
-			}
+			node.Children[seg] = newRoute()
+			// Set the "absolute" path of the list page to the current route
+			// by joining all segments up to the current segment.
+			node.Children[seg].ListPage.Path = filepath.Join(segments[:i]...)
 		}
+		// Append the page to the current segment if it is the last one.
 		if i == len(segments)-1 {
 			node.Children[seg].Pages = append(node.Children[seg].Pages, page)
 			break
 		}
+		// Walk down the tree to the next segment.
 		node = node.Children[seg]
 	}
 }

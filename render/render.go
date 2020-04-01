@@ -27,6 +27,7 @@ func AsWebsite(ctx Context, site *build.Site) error {
 		for _, page := range r.Pages {
 			_ = renderArticlePage(&ctx, page)
 		}
+		_ = renderArticleListPage(&ctx, r.ListPage)
 	}, -1)
 
 	return nil

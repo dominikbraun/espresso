@@ -100,6 +100,23 @@ func (b *builder) buildNav() error {
 	return nil
 }
 
+// buildListPages attempts to build overview pages for all categories. For
+// each route in the route tree, all articles are added to the routes's
+// list page model.
+func (b *builder) buildListPages() error {
+	b.model.WalkRoutes(func(r *Route) {
+		articles := make([]*model.Article, len(r.Pages))
+
+		for i, page := range r.Pages {
+			articles[i] = &page.Article
+		}
+
+		r.ListPage.Articles = articles
+	}, -1)
+
+	return nil
+}
+
 // buildFooter attempts to create a model.Footer under consideration of
 // user-defined site settings. It is independent from any site pages.
 func (b *builder) buildFooter() error {
