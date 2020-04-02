@@ -30,6 +30,8 @@ type Site struct {
 // The root field of Site is considered as the root route that holds all
 // sub-routes: "/blog" would be a child route of the site's root.
 type Route struct {
+	// Path is a convenience field for storing the route's absolute path.
+	Path     string
 	Pages    []*model.ArticlePage
 	ListPage *model.ArticleListPage
 	Children map[string]*Route
@@ -62,22 +64,22 @@ func newRoute() *Route {
 // registerPage registers a given page under the route (path) that is
 // stored in page.Path. This path must not end with a trailing slash.
 //
-// If the route doesn't exist yet, all of its required child-routes will
-// be created until the entire page path is depicted.
+// If the route doesn't exist yet, all of its required child-routes are
+// created until the entire page path is depicted.
 func (s *Site) registerPage(page *model.ArticlePage) {
 	node := &s.root
 	segments := strings.Split(page.Path, "/")
 
 	for i, seg := range segments {
-		// If the child route (identified by the segment) doesn't exist,
-		// create a new route under the current segment key.
+		// Create the route with under segment key if it doesn't exist.
 		if _, exists := node.Children[seg]; !exists {
 			node.Children[seg] = newRoute()
-			// Set the "absolute" path of the list page to the current route
-			// by joining all segments up to the current segment.
-			node.Children[seg].ListPage.Path = filepath.Join(segments[:i]...)
+			// The current path consists of all previous path segments
+			// up to the current segment. This path will be stored.
+			path := filepath.FromSlash(filepath.Join(segments[:i]...))
+			node.Children[seg].Path = path
 		}
-		// Append the page to the current segment if it is the last one.
+		// Store the page in the current segment if it is the last one.
 		if i == len(segments)-1 {
 			node.Children[seg].Pages = append(node.Children[seg].Pages, page)
 			break

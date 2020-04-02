@@ -28,9 +28,10 @@ func newBuilder(ctx Context) *builder {
 	return &b
 }
 
-// buildPage attempts to generate a model.Page from a []byte. This is done
-// by parsing its contents and building a page model which can be registered
-// afterwards. The file parameter indicates the original file path.
+// buildPage attempts to generate a model.Page from a []byte. This is
+// done by parsing its contents and building a page model which can be
+// registered afterwards. The file parameter indicates the original file
+// path.
 //
 // buildPage is safe for concurrent invocation. The file path must contain
 // the build path.
@@ -54,8 +55,8 @@ func (b *builder) buildPage(source []byte, file string) (*model.ArticlePage, err
 	return page, nil
 }
 
-// registerPage registers a page model to the builder's site model. This
-// page model can be retrieved using buildPage for instance.
+// registerPage registers a page model to the builder's site model.
+// This page model can be retrieved using buildPage for instance.
 //
 // registerPage is safe for concurrent invocation.
 func (b *builder) registerPage(page *model.ArticlePage) {
@@ -65,11 +66,11 @@ func (b *builder) registerPage(page *model.ArticlePage) {
 }
 
 // buildNav attempts to create a model.Nav from the existing pages that
-// have to be built and registered first, meaning that buildNav must be
-// called after all buildPage calls have finished.
+// have to be built and registered first, meaning that buildNav must
+// be called after all buildPage calls have finished.
 //
-// buildNav takes the site settings into account and overrides the Nav if
-// this is specified in the site settings.
+// buildNav takes the site settings into account and overrides the Nav
+// if this is specified in the site settings.
 func (b *builder) buildNav() error {
 	nav := &model.Nav{
 		Brand: b.ctx.Settings.Name,
@@ -100,19 +101,21 @@ func (b *builder) buildNav() error {
 	return nil
 }
 
-// buildListPages attempts to build overview pages for all categories. For
-// each route in the route tree, all articles are added to the routes's
-// list page model.
+// buildListPages attempts to build overview pages for all categories.
+// For each route in the route tree, all articles are added to the
+// routes's list page model.
 func (b *builder) buildListPages() error {
-	b.model.WalkRoutes(func(r *Route) {
-		articles := make([]*model.Article, len(r.Pages))
+	b.model.
+		WalkRoutes(func(r *Route) {
+			r.ListPage = &model.ArticleListPage{
+				Page:     model.Page{Path: r.Path},
+				Articles: make([]*model.Article, len(r.Pages)),
+			}
 
-		for i, page := range r.Pages {
-			articles[i] = &page.Article
-		}
-
-		r.ListPage.Articles = articles
-	}, -1)
+			for i, page := range r.Pages {
+				r.ListPage.Articles[i] = &page.Article
+			}
+		}, -1)
 
 	return nil
 }
