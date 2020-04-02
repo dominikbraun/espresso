@@ -9,6 +9,13 @@ import (
 	"sync"
 )
 
+type RegisterMode uint
+
+const (
+	NoRegister     RegisterMode = 0
+	DirectRegister RegisterMode = 1
+)
+
 // builder is the type used for performing the actual build. It knows
 // the current build context and generates the entire site model which
 // can then be rendered to a static site.
@@ -35,13 +42,17 @@ func newBuilder(ctx Context) *builder {
 //
 // buildPage is safe for concurrent invocation. The file path must contain
 // the build path.
-func (b *builder) buildPage(source []byte, file string) (*model.ArticlePage, error) {
+func (b *builder) buildPage(source []byte, file string, mode RegisterMode) (*model.ArticlePage, error) {
 	article, err := b.ctx.Parser.ParseArticle(source)
 	if err != nil {
 		return nil, err
 	}
 
-	route := filepath.ToSlash(filepath.Dir(file))
+	// If the file path is `my-site/content/blog/category-1/post.md`, its
+	// relative path within the build path is `/blog/category-1/post.md`.
+	relativePath := file[len(filepath.Join(b.ctx.BuildPath, "content")):]
+
+	route := filepath.ToSlash(filepath.Dir(relativePath))
 	id := strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))
 
 	page := &model.ArticlePage{
@@ -50,6 +61,10 @@ func (b *builder) buildPage(source []byte, file string) (*model.ArticlePage, err
 			ID:   id,
 		},
 		Article: article,
+	}
+
+	if mode == DirectRegister {
+		b.registerPage(page)
 	}
 
 	return page, nil

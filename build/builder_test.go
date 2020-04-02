@@ -80,7 +80,7 @@ Tags:
 	}
 
 	for i, test := range testdata {
-		page, err := builder.buildPage([]byte(test.source), test.file)
+		page, err := builder.buildPage([]byte(test.source), test.file, NoRegister)
 		if err != nil {
 			t.Error(err)
 		}

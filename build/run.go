@@ -48,8 +48,7 @@ func Run(ctx Context, files <-chan string) *Site {
 func processQueue(builder *builder, files <-chan string, wg *sync.WaitGroup) {
 	for file := range files {
 		source, _ := ioutil.ReadFile(file)
-		page, _ := builder.buildPage(source, file)
-		builder.registerPage(page)
+		_, _ = builder.buildPage(source, file, DirectRegister)
 	}
 	wg.Done()
 }
