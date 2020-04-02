@@ -30,6 +30,11 @@ func AsWebsite(ctx Context, site *build.Site) error {
 		_ = renderArticleListPage(&ctx, r.ListPage)
 	}, -1)
 
+	assetTarget := filepath.Join(ctx.TargetDir, "assets")
+	if err := filesystem.CopyDir(ctx.AssetDir, assetTarget); err != nil {
+		return err
+	}
+
 	return nil
 }
 
