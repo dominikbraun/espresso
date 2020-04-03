@@ -3,6 +3,7 @@ package render
 
 import (
 	"github.com/dominikbraun/espresso/build"
+	"github.com/dominikbraun/espresso/config"
 	"github.com/dominikbraun/espresso/filesystem"
 	"github.com/dominikbraun/espresso/model"
 	"github.com/dominikbraun/espresso/template"
@@ -30,7 +31,7 @@ func AsWebsite(ctx Context, site *build.Site) error {
 		_ = renderArticleListPage(&ctx, r.ListPage)
 	}, -1)
 
-	assetTarget := filepath.Join(ctx.TargetDir, "assets")
+	assetTarget := filepath.Join(ctx.TargetDir, config.AssetDir)
 	if err := filesystem.CopyDir(ctx.AssetDir, assetTarget); err != nil {
 		return err
 	}

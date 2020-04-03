@@ -3,8 +3,8 @@
 package main
 
 import (
+	"github.com/dominikbraun/espresso/config"
 	"github.com/dominikbraun/espresso/core"
-	"github.com/dominikbraun/espresso/settings"
 	"github.com/spf13/cobra"
 	"log"
 )
@@ -27,9 +27,9 @@ func main() {
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			buildPath := args[0]
-			var s settings.Site
+			var s config.Site
 
-			if err := settings.FromFile(buildPath, settingsFile, &s); err != nil {
+			if err := config.FromFile(buildPath, settingsFile, &s); err != nil {
 				return err
 			}
 

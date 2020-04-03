@@ -3,8 +3,8 @@
 package build
 
 import (
+	"github.com/dominikbraun/espresso/config"
 	"github.com/dominikbraun/espresso/parser"
-	"github.com/dominikbraun/espresso/settings"
 	"io/ioutil"
 	"sync"
 )
@@ -17,7 +17,7 @@ const (
 // for a particular build and may be entirely different for another one.
 type Context struct {
 	BuildPath string
-	Settings  *settings.Site
+	Settings  *config.Site
 	Parser    parser.Parser
 }
 

@@ -3,8 +3,8 @@
 package build
 
 import (
+	"github.com/dominikbraun/espresso/config"
 	"github.com/dominikbraun/espresso/parser"
-	"github.com/dominikbraun/espresso/settings"
 	"testing"
 )
 
@@ -13,7 +13,7 @@ import (
 func defaultBuilder() *builder {
 	builder := newBuilder(Context{
 		BuildPath: ".",
-		Settings:  &settings.Site{},
+		Settings:  &config.Site{},
 		Parser:    parser.NewMarkdown(),
 	})
 	return builder
