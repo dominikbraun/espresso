@@ -3,6 +3,7 @@
 package build
 
 import (
+	"github.com/dominikbraun/espresso/config"
 	"github.com/dominikbraun/espresso/model"
 	"path/filepath"
 	"strings"
@@ -50,7 +51,7 @@ func (b *builder) buildPage(source []byte, file string, mode RegisterMode) (*mod
 
 	// If the file path is `my-site/content/blog/category-1/post.md`, its
 	// relative path within the build path is `/blog/category-1/post.md`.
-	relativePath := file[len(filepath.Join(b.ctx.BuildPath, "content")):]
+	relativePath := file[len(b.ctx.BuildPath+"/"+config.ContentDir):]
 
 	route := filepath.ToSlash(filepath.Dir(relativePath))
 	id := strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))

@@ -46,7 +46,7 @@ Tags:
     - Coffee
 ---`,
 			file:           "./content/coffee/making-barista-quality-espresso.md",
-			expectedPath:   "content/coffee",
+			expectedPath:   "/coffee",
 			expectedID:     "making-barista-quality-espresso",
 			expectedTitle:  "Making Barista-Quality Espresso",
 			expected1stTag: "Espresso",
@@ -60,7 +60,7 @@ Tags:
     - Roasting
 ---`,
 			file:           "./content/coffee/coffee-roasting-basics.md",
-			expectedPath:   "content/coffee",
+			expectedPath:   "/coffee",
 			expectedID:     "coffee-roasting-basics",
 			expectedTitle:  "Coffee Roasting Basics",
 			expected1stTag: "Coffee",
@@ -72,7 +72,7 @@ Tags:
     - About
 ---`,
 			file:           "./content/about-me.md",
-			expectedPath:   "content",
+			expectedPath:   "/",
 			expectedID:     "about-me",
 			expectedTitle:  "About Me",
 			expected1stTag: "About",
