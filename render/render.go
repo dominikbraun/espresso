@@ -41,7 +41,7 @@ func AsWebsite(ctx Context, site *build.Site) error {
 
 // renderArticlePage renders a given ArticlePage as an HTML file.
 func renderArticlePage(ctx *Context, page *model.ArticlePage) error {
-	pagePath := filepath.Join(ctx.TargetDir, page.Path, page.ID)
+	pagePath := filepath.Join(ctx.TargetDir, page.Path, page.Article.ID)
 
 	if err := renderPage(ctx, pagePath, template.Article, page); err != nil {
 		return err

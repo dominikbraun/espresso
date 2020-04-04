@@ -64,12 +64,11 @@ func (b *builder) buildPage(source []byte, file string, mode RegisterMode) (*mod
 	relativePath := file[contentDirLen:]
 
 	route := filepath.ToSlash(filepath.Dir(relativePath))
-	id := strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))
+	article.ID = strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))
 
 	page := &model.ArticlePage{
 		Page: model.Page{
 			Path: route,
-			ID:   id,
 		},
 		Article: article,
 	}
@@ -92,8 +91,8 @@ func (b *builder) registerPage(page *model.ArticlePage) {
 }
 
 // buildNav attempts to create a model.Nav from the existing pages that
-// have to be built and registered first, meaning that buildNav must
-// be called after all buildPage calls have finished.
+// have to be built and registered first, meaning that buildNav must be
+// called after all buildPage calls have finished.
 //
 // buildNav takes the site settings into account and overrides the Nav
 // if this is specified in the site settings.

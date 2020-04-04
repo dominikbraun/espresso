@@ -89,8 +89,8 @@ Tags:
 			fail(t, i, test.expectedPath, page.Path)
 		}
 
-		if page.ID != test.expectedID {
-			fail(t, i, test.expectedID, page.ID)
+		if page.Article.ID != test.expectedID {
+			fail(t, i, test.expectedID, page.Article.ID)
 		}
 
 		if page.Article.Title != test.expectedTitle {
