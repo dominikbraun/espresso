@@ -51,7 +51,17 @@ func (b *builder) buildPage(source []byte, file string, mode RegisterMode) (*mod
 
 	// If the file path is `my-site/content/blog/category-1/post.md`, its
 	// relative path within the build path is `/blog/category-1/post.md`.
-	relativePath := file[len(b.ctx.BuildPath+"/"+config.ContentDir):]
+	// contentDirLen marks the starting point for the relative path.
+	contentDirLen := len(b.ctx.BuildPath + "/" + config.ContentDir)
+
+	// If the build path is `.`, the file path is probably simplified to
+	// `content/blog/category-1/post.md`. This edge case is handled here.
+	if b.ctx.BuildPath == "." && file[:len(config.ContentDir)] == config.ContentDir {
+		contentDirLen = len(config.ContentDir)
+	}
+
+	// Remove the build path and content dir to get the relative path.
+	relativePath := file[contentDirLen:]
 
 	route := filepath.ToSlash(filepath.Dir(relativePath))
 	id := strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))
