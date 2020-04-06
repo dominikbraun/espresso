@@ -145,6 +145,30 @@ func (b *builder) buildListPages() error {
 	return nil
 }
 
+// buildRelated attempts to store all related articles for each article
+// in the page tree. Storing a pointer to these related articles allows
+// the user to access the fields of each article in his templates.
+func (b *builder) buildRelated() error {
+	b.model.
+		WalkRoutes(func(r *Route) {
+			for _, p := range r.Pages {
+				for _, link := range p.Article.RelatedLinks {
+					// A `link` consists of an Espresso path like `/coffee`
+					// and an article ID like `coffee-roasting-basics.md`.
+					// These components are split here to resolve the path.
+					path := link[:strings.LastIndex(link, "/")]
+					id := link[len(path)+1:]
+
+					// Load the page and its article by resolving its path.
+					page, _ := b.model.resolvePath(path, id)
+					page.Article.Related = append(page.Article.Related, &page.Article)
+				}
+			}
+		}, -1)
+
+	return nil
+}
+
 // buildFooter attempts to create a model.Footer under consideration of
 // user-defined site settings. It is independent from any site pages.
 func (b *builder) buildFooter() error {

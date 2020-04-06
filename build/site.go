@@ -3,6 +3,7 @@
 package build
 
 import (
+	"fmt"
 	"github.com/dominikbraun/espresso/model"
 	"path/filepath"
 	"strings"
@@ -108,4 +109,28 @@ func (s *Site) walkRoute(route *Route, walkFn func(r *Route), depth int, current
 		walkFn(route)
 		s.walkRoute(route, walkFn, depth, currentDepth)
 	}
+}
+
+// resolvePath resolves a given path in the route tree and returns the
+// page with the given ID in that path. Returns an error if the either
+// the path or the article ID does not exist.
+func (s *Site) resolvePath(path string, id string) (*model.ArticlePage, error) {
+	node := &s.root
+	segments := strings.Split(path, "/")
+
+	for i, seg := range segments {
+		if _, exists := node.Children[seg]; !exists {
+			return nil, fmt.Errorf("the sub-route `%s` does not exist", seg)
+		}
+		if i == len(segments)-1 {
+			for _, page := range node.Children[seg].Pages {
+				if page.Article.ID == id {
+					return page, nil
+				}
+			}
+		}
+		node = node.Children[seg]
+	}
+
+	return nil, fmt.Errorf("article `%s` not found in `%s`", id, path)
 }
