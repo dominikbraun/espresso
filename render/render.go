@@ -12,7 +12,8 @@ import (
 )
 
 const (
-	indexFile string = "index.html"
+	indexFile  string = "index.html"
+	numWorkers int    = 5
 )
 
 // Context represents the rendering context and holds data required
@@ -25,32 +26,53 @@ type Context struct {
 
 // AsWebsite starts rendering the site model as an HTML-base site.
 func AsWebsite(ctx Context, site *build.Site) error {
-	site.WalkRoutes(func(r *build.Route) {
-		var wg sync.WaitGroup
+	pages := make(chan *model.ArticlePage)
+	var wg sync.WaitGroup
 
-		for _, page := range r.Pages {
-			wg.Add(1)
-			renderArticlePage(&ctx, page, &wg)
-		}
-		_ = renderArticleListPage(&ctx, r.ListPage)
-	}, -1)
-
-	assetTarget := filepath.Join(ctx.TargetDir, config.AssetDir)
-	if err := filesystem.CopyDir(ctx.AssetDir, assetTarget); err != nil {
-		return err
+	for i := 0; i < numWorkers; i++ {
+		wg.Add(1)
+		go processQueue(&ctx, pages, &wg)
 	}
+
+	go streamPages(&ctx, site, pages)
+	wg.Wait()
+
+	_ = copyAssetDir(&ctx)
 
 	return nil
 }
 
+// streamPages walks down the route tree and sends all pages through
+// the pages channel, which is used to receive and build these pages.
+func streamPages(ctx *Context, site *build.Site, pages chan<- *model.ArticlePage) {
+	site.WalkRoutes(func(r *build.Route) {
+		for _, page := range r.Pages {
+			pages <- page
+		}
+		_ = renderArticleListPage(ctx, r.ListPage)
+	}, -1)
+
+	close(pages)
+}
+
+// processQueue receives pages from the pages channel and processes
+// them by invoking the renderArticlePage function.
+func processQueue(ctx *Context, pages <-chan *model.ArticlePage, wg *sync.WaitGroup) {
+	for page := range pages {
+		_ = renderArticlePage(ctx, page)
+	}
+	wg.Done()
+}
+
 // renderArticlePage renders a given ArticlePage as an HTML file.
-func renderArticlePage(ctx *Context, page *model.ArticlePage, wg *sync.WaitGroup) {
-	defer wg.Done()
+func renderArticlePage(ctx *Context, page *model.ArticlePage) error {
 	pagePath := filepath.Join(ctx.TargetDir, page.Path, page.Article.ID)
 
 	if err := renderPage(ctx, pagePath, template.Article, page); err != nil {
-		// Handle error by sending it through a channel or so.
+		return err
 	}
+
+	return nil
 }
 
 // renderArticleListPage renders a given ArticleListPage as an HTML
@@ -81,4 +103,16 @@ func renderPage(ctx *Context, path, tpl string, data interface{}) error {
 	tplPath := filepath.Join(ctx.TemplateDir, tpl)
 
 	return template.Render(tplPath, data, handle)
+}
+
+// copyAssetDir copies the asset directory from the build path into the
+// build target directory recursively.
+func copyAssetDir(ctx *Context) error {
+	assetTarget := filepath.Join(ctx.TargetDir, config.AssetDir)
+
+	if err := filesystem.CopyDir(ctx.AssetDir, assetTarget); err != nil {
+		return err
+	}
+
+	return nil
 }
