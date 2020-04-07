@@ -75,6 +75,7 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/artifacts
+      - run: mkdir artifacts && cp /tmp/artifacts/* artifacts/
       - run:
           name: Publish GitHub release
           command: |
@@ -84,7 +85,7 @@ jobs:
                 -r "${CIRCLE_PROJECT_REPONAME}" \
                 -c "${CIRCLE_SHA1}" \
                 -delete "${VERSION}" \
-                /tmp/artifacts
+                artifacts/
 
 workflows:
   version: 2
