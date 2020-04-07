@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Articles</title>
+    </head>
+    <body>
+        {{range $article := .Articles}}
+            <h2>{{$article.Title}}</h2>
+            <a href="{{$article.ID}}">go to article</a>
+        {{end}}
+    </body>
+</html>

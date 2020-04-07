@@ -3,8 +3,8 @@
 package build
 
 import (
+	"github.com/dominikbraun/espresso/config"
 	"github.com/dominikbraun/espresso/parser"
-	"github.com/dominikbraun/espresso/settings"
 	"testing"
 )
 
@@ -13,7 +13,7 @@ import (
 func defaultBuilder() *builder {
 	builder := newBuilder(Context{
 		BuildPath: ".",
-		Settings:  &settings.Site{},
+		Settings:  &config.Site{},
 		Parser:    parser.NewMarkdown(),
 	})
 	return builder
@@ -46,7 +46,7 @@ Tags:
     - Coffee
 ---`,
 			file:           "./content/coffee/making-barista-quality-espresso.md",
-			expectedPath:   "content/coffee",
+			expectedPath:   "/coffee",
 			expectedID:     "making-barista-quality-espresso",
 			expectedTitle:  "Making Barista-Quality Espresso",
 			expected1stTag: "Espresso",
@@ -60,7 +60,7 @@ Tags:
     - Roasting
 ---`,
 			file:           "./content/coffee/coffee-roasting-basics.md",
-			expectedPath:   "content/coffee",
+			expectedPath:   "/coffee",
 			expectedID:     "coffee-roasting-basics",
 			expectedTitle:  "Coffee Roasting Basics",
 			expected1stTag: "Coffee",
@@ -72,7 +72,7 @@ Tags:
     - About
 ---`,
 			file:           "./content/about-me.md",
-			expectedPath:   "content",
+			expectedPath:   "/",
 			expectedID:     "about-me",
 			expectedTitle:  "About Me",
 			expected1stTag: "About",
@@ -80,7 +80,7 @@ Tags:
 	}
 
 	for i, test := range testdata {
-		page, err := builder.buildPage([]byte(test.source), test.file)
+		page, err := builder.buildPage([]byte(test.source), test.file, NoRegister)
 		if err != nil {
 			t.Error(err)
 		}
@@ -89,8 +89,8 @@ Tags:
 			fail(t, i, test.expectedPath, page.Path)
 		}
 
-		if page.ID != test.expectedID {
-			fail(t, i, test.expectedID, page.ID)
+		if page.Article.ID != test.expectedID {
+			fail(t, i, test.expectedID, page.Article.ID)
 		}
 
 		if page.Article.Title != test.expectedTitle {

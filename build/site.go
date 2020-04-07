@@ -3,7 +3,9 @@
 package build
 
 import (
+	"fmt"
 	"github.com/dominikbraun/espresso/model"
+	"path/filepath"
 	"strings"
 )
 
@@ -29,7 +31,10 @@ type Site struct {
 // The root field of Site is considered as the root route that holds all
 // sub-routes: "/blog" would be a child route of the site's root.
 type Route struct {
+	// Path is a convenience field for storing the route's absolute path.
+	Path     string
 	Pages    []*model.ArticlePage
+	ListPage *model.ArticleListPage
 	Children map[string]*Route
 }
 
@@ -44,23 +49,43 @@ func newSite() *Site {
 	return &s
 }
 
+// newRoute creates and initializes a new Route instance.
+func newRoute() *Route {
+	r := Route{
+		Pages: make([]*model.ArticlePage, 0),
+		ListPage: &model.ArticleListPage{
+			Page:     model.Page{},
+			Articles: make([]*model.Article, 0),
+		},
+		Children: make(map[string]*Route),
+	}
+	return &r
+}
+
 // registerPage registers a given page under the route (path) that is
 // stored in page.Path. This path must not end with a trailing slash.
+//
+// If the route doesn't exist yet, all of its required child-routes are
+// created until the entire page path is depicted.
 func (s *Site) registerPage(page *model.ArticlePage) {
 	node := &s.root
 	segments := strings.Split(page.Path, "/")
 
 	for i, seg := range segments {
+		// Create the route with under segment key if it doesn't exist.
 		if _, exists := node.Children[seg]; !exists {
-			node.Children[seg] = &Route{
-				Pages:    make([]*model.ArticlePage, 0),
-				Children: make(map[string]*Route),
-			}
+			node.Children[seg] = newRoute()
+			// The current path consists of all previous path segments
+			// up to the current segment. This path will be stored.
+			path := filepath.FromSlash(filepath.Join(segments[:i]...))
+			node.Children[seg].Path = path
 		}
+		// Store the page in the current segment if it is the last one.
 		if i == len(segments)-1 {
 			node.Children[seg].Pages = append(node.Children[seg].Pages, page)
 			break
 		}
+		// Walk down the tree to the next segment.
 		node = node.Children[seg]
 	}
 }
@@ -84,4 +109,28 @@ func (s *Site) walkRoute(route *Route, walkFn func(r *Route), depth int, current
 		walkFn(route)
 		s.walkRoute(route, walkFn, depth, currentDepth)
 	}
+}
+
+// resolvePath resolves a given path in the route tree and returns the
+// page with the given ID in that path. Returns an error if the either
+// the path or the article ID does not exist.
+func (s *Site) resolvePath(path string, id string) (*model.ArticlePage, error) {
+	node := &s.root
+	segments := strings.Split(path, "/")
+
+	for i, seg := range segments {
+		if _, exists := node.Children[seg]; !exists {
+			return nil, fmt.Errorf("the sub-route `%s` does not exist", seg)
+		}
+		if i == len(segments)-1 {
+			for _, page := range node.Children[seg].Pages {
+				if page.Article.ID == id {
+					return page, nil
+				}
+			}
+		}
+		node = node.Children[seg]
+	}
+
+	return nil, fmt.Errorf("article `%s` not found in `%s`", id, path)
 }

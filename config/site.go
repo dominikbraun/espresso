@@ -1,6 +1,6 @@
-// Package settings provides user-defined type-safe settings as structs
+// Package config provides user-defined type-safe config as structs
 // as well as functions for populating them from configuration files.
-package settings
+package config
 
 import "github.com/spf13/viper"
 

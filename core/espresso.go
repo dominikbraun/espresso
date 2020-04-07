@@ -4,25 +4,18 @@ package core
 
 import (
 	"github.com/dominikbraun/espresso/build"
+	"github.com/dominikbraun/espresso/config"
 	"github.com/dominikbraun/espresso/filesystem"
 	"github.com/dominikbraun/espresso/parser"
 	"github.com/dominikbraun/espresso/render"
-	"github.com/dominikbraun/espresso/settings"
 	"path/filepath"
-)
-
-const (
-	contentDir  string = "content"
-	templateDir string = "templates"
-	assetDir    string = "assets"
-	targetDir   string = "target"
 )
 
 // RunBuild performs a website build based on content files and settings
 // stored in the build path, rendering a complete static website.
-func RunBuild(buildPath string, settings *settings.Site) error {
+func RunBuild(buildPath string, settings *config.Site) error {
 	files := make(chan string)
-	contentPath := filepath.Join(buildPath, contentDir)
+	contentPath := filepath.Join(buildPath, config.ContentDir)
 
 	go func() {
 		_ = filesystem.Stream(contentPath, filesystem.MarkdownOnly, files)
@@ -35,9 +28,9 @@ func RunBuild(buildPath string, settings *settings.Site) error {
 	}, files)
 
 	if err := render.AsWebsite(render.Context{
-		TemplateDir: filepath.Join(buildPath, templateDir),
-		AssetDir:    filepath.Join(buildPath, assetDir),
-		TargetDir:   filepath.Join(buildPath, targetDir),
+		TemplateDir: filepath.Join(buildPath, config.TemplateDir),
+		AssetDir:    filepath.Join(buildPath, config.AssetDir),
+		TargetDir:   filepath.Join(buildPath, config.TargetDir),
 	}, site); err != nil {
 		return err
 	}

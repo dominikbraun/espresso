@@ -3,21 +3,21 @@
 package build
 
 import (
+	"github.com/dominikbraun/espresso/config"
 	"github.com/dominikbraun/espresso/parser"
-	"github.com/dominikbraun/espresso/settings"
 	"io/ioutil"
 	"sync"
 )
 
 const (
-	numWorkers int = 5
+	numWorkers int = 8
 )
 
 // Context represents the build context. This context provides information
 // for a particular build and may be entirely different for another one.
 type Context struct {
 	BuildPath string
-	Settings  *settings.Site
+	Settings  *config.Site
 	Parser    parser.Parser
 }
 
@@ -36,6 +36,8 @@ func Run(ctx Context, files <-chan string) *Site {
 	wg.Wait()
 
 	_ = builder.buildNav()
+	_ = builder.buildListPages()
+	_ = builder.buildRelated()
 	_ = builder.buildFooter()
 
 	return builder.model
@@ -47,8 +49,7 @@ func Run(ctx Context, files <-chan string) *Site {
 func processQueue(builder *builder, files <-chan string, wg *sync.WaitGroup) {
 	for file := range files {
 		source, _ := ioutil.ReadFile(file)
-		page, _ := builder.buildPage(source, file)
-		builder.registerPage(page)
+		_, _ = builder.buildPage(source, file, DirectRegister)
 	}
 	wg.Done()
 }

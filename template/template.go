@@ -7,7 +7,8 @@ import (
 )
 
 const (
-	Article string = "article.html"
+	Article     string = "article.html"
+	ArticleList string = "article-list.html"
 )
 
 // Render attempts to render the specified template file, populate

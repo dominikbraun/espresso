@@ -76,5 +76,12 @@ func (m *Markdown) readMetadata(article *model.Article, metadata map[string]inte
 		}
 	}
 
+	if metadata["Related"] != nil {
+		related, _ := metadata["Related"].([]interface{})
+		for i := 0; i < len(related); i++ {
+			article.RelatedLinks = append(article.RelatedLinks, related[i].(string))
+		}
+	}
+
 	return nil
 }

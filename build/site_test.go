@@ -13,19 +13,13 @@ func TestRegisterPage(t *testing.T) {
 	site := newSite()
 
 	site.registerPage(&model.ArticlePage{
-		Page: model.Page{
-			Path: "content/coffee",
-			ID:   "making-barista-quality-espresso",
-		},
-		Article: model.Article{},
+		Page:    model.Page{Path: "content/coffee"},
+		Article: model.Article{ID: "making-barista-quality-espresso"},
 	})
 
 	site.registerPage(&model.ArticlePage{
-		Page: model.Page{
-			Path: "content",
-			ID:   "about-me",
-		},
-		Article: model.Article{},
+		Page:    model.Page{Path: "content"},
+		Article: model.Article{ID: "about-me"},
 	})
 
 	if _, ok := site.root.Children["content"]; !ok {
