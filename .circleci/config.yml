@@ -92,13 +92,13 @@ workflows:
   espresso-ci:
     jobs:
       - espresso-test
-      - espresso-gh-release:
-          requires:
-            - espresso-test
+      - espresso-release-build:
           filters:
             branches:
               only:
-              - master
-              - circleci-project-setup
+                - circleci-project-setup
             tags:
               only: /^\d+\.\d+\.\d+$/
+      - espresso-gh-release:
+          requires:
+            - espresso-release-build
