@@ -13,7 +13,7 @@ import (
 
 const (
 	indexFile  string = "index.html"
-	numWorkers int    = 5
+	numWorkers int    = 8
 )
 
 // Context represents the rendering context and holds data required

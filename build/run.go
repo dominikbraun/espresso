@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	numWorkers int = 5
+	numWorkers int = 8
 )
 
 // Context represents the build context. This context provides information
