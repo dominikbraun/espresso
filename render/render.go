@@ -8,6 +8,7 @@ import (
 	"github.com/dominikbraun/espresso/model"
 	"github.com/dominikbraun/espresso/template"
 	"path/filepath"
+	"sync"
 )
 
 const (
@@ -25,8 +26,11 @@ type Context struct {
 // AsWebsite starts rendering the site model as an HTML-base site.
 func AsWebsite(ctx Context, site *build.Site) error {
 	site.WalkRoutes(func(r *build.Route) {
+		var wg sync.WaitGroup
+
 		for _, page := range r.Pages {
-			_ = renderArticlePage(&ctx, page)
+			wg.Add(1)
+			renderArticlePage(&ctx, page, &wg)
 		}
 		_ = renderArticleListPage(&ctx, r.ListPage)
 	}, -1)
@@ -40,14 +44,13 @@ func AsWebsite(ctx Context, site *build.Site) error {
 }
 
 // renderArticlePage renders a given ArticlePage as an HTML file.
-func renderArticlePage(ctx *Context, page *model.ArticlePage) error {
+func renderArticlePage(ctx *Context, page *model.ArticlePage, wg *sync.WaitGroup) {
+	defer wg.Done()
 	pagePath := filepath.Join(ctx.TargetDir, page.Path, page.Article.ID)
 
 	if err := renderPage(ctx, pagePath, template.Article, page); err != nil {
-		return err
+		// Handle error by sending it through a channel or so.
 	}
-
-	return nil
 }
 
 // renderArticleListPage renders a given ArticleListPage as an HTML
