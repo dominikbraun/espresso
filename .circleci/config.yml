@@ -84,7 +84,7 @@ jobs:
                 -r "${CIRCLE_PROJECT_REPONAME}" \
                 -c "${CIRCLE_SHA1}" \
                 -delete "${VERSION}" \
-                ./artifacts/
+                /tmp/artifacts
 
 workflows:
   version: 2
