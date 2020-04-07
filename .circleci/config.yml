@@ -37,8 +37,67 @@ jobs:
           name: Run all tests
           command: go test -v ./...
 
+  espresso-release-build:
+    executor: go-container
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependency-cache-v1-{{ .Branch }}-{{ checksum "go.mod" }}
+            - dependency-cache-v1-{{ .Branch }}-
+            - dependency-cache-v1-
+            - repository-cache-v1-{{ .Branch }}-{{ .Revision }}
+            - repository-cache-v1-{{ .Branch }}-
+            - repository-cache-v1-
+      - run: go mod download
+      - save_cache:
+          key: dependency-cache-v1-{{ .Branch }}-{{ checksum "go.mod" }}
+          paths:
+            - /go/pkg
+      - save_cache:
+          key: repository-cache-v1-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ".git"
+      - run: mkdir -p /tmp/artifacts
+      - run:
+          name: Build and pack Espresso for Linux
+          command: |
+            GOOS=linux GOARCH=amd64 go build -v -o .target/espresso .
+            tar -czf /tmp/artifacts/espresso-linux-amd64.tar.gz .target/espresso
+      - persist_to_workspace:
+          root: /tmp/artifacts
+          paths:
+            - espresso-linux-amd64.tar.gz
+
+  espresso-gh-release:
+    docker:
+      - image: cibuilds/github:0.10
+    steps:
+      - attach_workspace:
+          at: ./artifacts
+      - run:
+          name: Publish GitHub release
+          command: |
+            VERSION="0.0.0"
+            ghr -t "${GITHUB_TOKEN}" \
+                -u "${CIRCLE_PROJECT_USERNAME}" \
+                -r "${CIRCLE_PROJECT_REPONAME}" \
+                -c "${CIRCLE_SHA1}" \
+                -delete "${VERSION}" \
+                ./artifacts/
+
 workflows:
   version: 2
   espresso-ci:
     jobs:
       - espresso-test
+      - espresso-gh-release:
+          requires:
+            - espresso-test
+          filters:
+            branches:
+              only:
+              - master
+              - circleci-project-setup
+            tags:
+              only: /^\d+\.\d+\.\d+$/
