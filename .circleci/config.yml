@@ -106,10 +106,12 @@ jobs:
       - run:
           name: Tag the Docker image (Light) as latest
           command: |
+            VERSION="0.0.0"
             docker image tag dominikbraun/espresso:$VERSION dominikbraun/espresso:latest
       - run:
           name: Publish the Docker images (Light)
           command: |
+            VERSION="0.0.0"
             docker push dominikbraun/espresso:$VERSION
             docker push dominikbraun/espresso:latest
 
