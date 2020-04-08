@@ -93,7 +93,11 @@ jobs:
       - image: circleci/buildpack-deps:stretch
     steps:
       - checkout
-      - run: echo ${DOCKER_PASS} | docker login --username ${DOCKER_USER} --password-stdin
+      - setup_remote_docker
+      - run:
+          name: Log in to Docker Hub
+          command: |
+            echo ${DOCKER_PASS} | docker login --username ${DOCKER_USER} --password-stdin
       - run:
           name: Build the Docker image (Light)
           command: |
