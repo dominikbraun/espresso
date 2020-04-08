@@ -88,6 +88,27 @@ jobs:
                 -delete "${VERSION}" \
                 artifacts/
 
+  espresso-docker-release:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - checkout
+      - run: echo ${DOCKER_PASS} | docker login --username ${DOCKER_USER} --password-stdin
+      - run:
+          name: Build the Docker image (Light)
+          command: |
+            VERSION="0.0.0"
+            docker image build -t dominikbraun/espresso:${VERSION} .
+      - run:
+          name: Tag the Docker image (Light) as latest
+          command: |
+            docker image tag dominikbraun/espresso:${VERSION} dominikbraun/espresso:latest
+      - run:
+          name: Publish the Docker images (Light)
+          command: |
+            docker push dominikbraun/espresso:${VERSION}
+            docker push dominikbraun/espresso:latest
+
 workflows:
   version: 2
   espresso-ci:
@@ -105,3 +126,6 @@ workflows:
       - espresso-gh-release:
           requires:
             - espresso-release-build
+      - espresso-docker-release:
+          requires:
+            - espresso-gh-release
