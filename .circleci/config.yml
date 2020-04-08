@@ -63,7 +63,7 @@ jobs:
           name: Build and pack Espresso for Linux
           command: |
             GOOS=linux GOARCH=amd64 go build -v -o .target/espresso cmd/main.go
-            cp ./target/espresso espresso
+            cp .target/espresso espresso
             tar -czf /tmp/artifacts/espresso-linux-amd64.tar.gz espresso
       - persist_to_workspace:
           root: /tmp/artifacts
