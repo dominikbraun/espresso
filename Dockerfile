@@ -26,6 +26,6 @@ LABEL org.label-schema.vcs-url="https://github.com/dominikbraun/espresso"
 LABEL org.label-schema.version=${VERSION}
 # LABEL org.label-schema.docker.cmd="docker container run dominikbraun/espresso"
 
-COPY --from=download ["/bin/.target/espresso", "/bin/.target/espresso"]
+COPY --from=download ["/bin/espresso", "/bin/espresso"]
 
-ENTRYPOINT ["/bin/.target/espresso"]
+ENTRYPOINT ["/bin/espresso"]
