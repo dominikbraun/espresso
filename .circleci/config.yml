@@ -40,7 +40,7 @@ jobs:
           name: Run all tests
           command: go test -v ./...
 
-  espresso-release-build:
+  espresso-build-releases:
     executor: go-container
     steps:
       - checkout
@@ -73,7 +73,7 @@ jobs:
           paths:
             - espresso-linux-amd64.tar.gz
 
-  espresso-gh-release:
+  espresso-release-gh:
     docker:
       - image: cibuilds/github:0.10
     steps:
@@ -83,15 +83,14 @@ jobs:
       - run:
           name: Publish GitHub release
           command: |
-            VERSION="0.0.0"
             ghr -t "${GITHUB_TOKEN}" \
                 -u "${CIRCLE_PROJECT_USERNAME}" \
                 -r "${CIRCLE_PROJECT_REPONAME}" \
                 -c "${CIRCLE_SHA1}" \
-                -delete "${VERSION}" \
+                -delete "${CIRCLE_TAG}" \
                 artifacts/
 
-  espresso-docker-release:
+  espresso-release-docker:
     docker:
       - image: circleci/buildpack-deps:stretch
     steps:
@@ -104,18 +103,15 @@ jobs:
       - run:
           name: Build the Docker image (Light)
           command: |
-            VERSION="0.0.0"
-            docker image build -t dominikbraun/espresso:${VERSION} .
+            docker image build -t dominikbraun/espresso:${CIRCLE_TAG} .
       - run:
           name: Tag the Docker image (Light) as latest
           command: |
-            VERSION="0.0.0"
-            docker image tag dominikbraun/espresso:$VERSION dominikbraun/espresso:latest
+            docker image tag dominikbraun/espresso:${CIRCLE_TAG} dominikbraun/espresso:latest
       - run:
           name: Publish the Docker images (Light)
           command: |
-            VERSION="0.0.0"
-            docker push dominikbraun/espresso:$VERSION
+            docker push dominikbraun/espresso:${CIRCLE_TAG}
             docker push dominikbraun/espresso:latest
 
 workflows:
@@ -123,7 +119,7 @@ workflows:
   espresso-ci:
     jobs:
       - espresso-test
-      - espresso-release-build:
+      - espresso-build-releases:
           requires:
             - espresso-test
           filters:
@@ -132,9 +128,9 @@ workflows:
                 - circleci-project-setup
             tags:
               only: /^\d+\.\d+\.\d+$/
-      - espresso-gh-release:
+      - espresso-release-gh:
           requires:
-            - espresso-release-build
-      - espresso-docker-release:
+            - espresso-build-releases
+      - espresso-release-docker:
           requires:
-            - espresso-gh-release
+            - espresso-release-gh
