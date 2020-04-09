@@ -122,7 +122,7 @@ jobs:
       - run:
           name: Build the Docker image (Light)
           command: |
-            docker image build -t dominikbraun/espresso:${CIRCLE_TAG} .
+            docker image build --build-arg VERSION=${CIRCLE_TAG} -t dominikbraun/espresso:${CIRCLE_TAG} .
       - run:
           name: Tag the Docker image (Light) as latest
           command: |
