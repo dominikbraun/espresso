@@ -35,7 +35,7 @@ jobs:
             - ".git"
       - run:
           name: Check Go format
-          command: ! go fmt ./... | read
+          command: "! go fmt ./... | read"
       - run:
           name: Run all tests
           command: go test -v ./...
