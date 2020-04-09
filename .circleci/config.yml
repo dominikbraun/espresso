@@ -1,5 +1,10 @@
 #
-# Espresso CircleCi 2.1 Configuration
+# Espresso CircleCI 2.1 Configuration
+#
+# This CI pipeline is capable of validating the code, running unit
+# tests and - if the workflow has been triggered by a tag - building
+# binaries for all supported platforms, creating a GitHub release as
+# well as publishing a corresponding Docker image to Docker Hub.
 #
 version: 2.1
 
@@ -68,10 +73,24 @@ jobs:
             GOOS=linux GOARCH=amd64 go build -v -o .target/espresso cmd/main.go
             cp .target/espresso espresso
             tar -czf /tmp/artifacts/espresso-linux-amd64.tar.gz espresso
+      - run:
+          name: Build and pack Espresso for macOS
+          command: |
+            GOOS=darwin GOARCH=amd64 go build -v -o .target/espresso cmd/main.go
+            cp .target/espresso espresso
+            tar -czf /tmp/artifacts/espresso-macos-amd64.tar.gz espresso
+      - run:
+          name: Build and pack Espresso for Windows
+          command: |
+            GOOS=windows GOARCH=amd64 go build -v -o .target/espresso.exe cmd/main.go
+            cp .target/espresso.exe espresso.exe
+            zip /tmp/artifacts/cleanup-windows-amd64.zip cleanup.exe
       - persist_to_workspace:
           root: /tmp/artifacts
           paths:
             - espresso-linux-amd64.tar.gz
+            - espresso-macos-amd64.tar.gz
+            - cleanup-windows-amd64.zip
 
   espresso-release-gh:
     docker:
@@ -87,6 +106,7 @@ jobs:
                 -u "${CIRCLE_PROJECT_USERNAME}" \
                 -r "${CIRCLE_PROJECT_REPONAME}" \
                 -c "${CIRCLE_SHA1}" \
+                -n "Espresso ${CIRCLE_TAG}" \
                 -delete "${CIRCLE_TAG}" \
                 artifacts/
 
