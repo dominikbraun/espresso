@@ -124,7 +124,7 @@ workflows:
             - espresso-test
           filters:
             tags:
-              only: /^\d+\.\d+\.\d+$/
+              only: ^\d+\.\d+\.\d+$
             branches:
               ignore: /.*/
       - espresso-release-gh:
