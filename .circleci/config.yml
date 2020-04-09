@@ -118,7 +118,10 @@ workflows:
   version: 2
   espresso-ci:
     jobs:
-      - espresso-test
+      - espresso-test:
+          filters:
+            tags:
+              only: ^\d+\.\d+\.\d+$
       - espresso-build-releases:
           requires:
             - espresso-test
