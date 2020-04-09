@@ -121,7 +121,7 @@ workflows:
       - espresso-test:
           filters:
             tags:
-              only: ^\d+\.\d+\.\d+$
+              only: /.*/
       - espresso-build-releases:
           requires:
             - espresso-test
