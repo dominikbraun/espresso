@@ -124,8 +124,8 @@ workflows:
             - espresso-test
           filters:
             branches:
-              only:
-                - circleci-project-setup
+              ignore:
+                - /.*/
             tags:
               only: /^\d+\.\d+\.\d+$/
       - espresso-release-gh:
