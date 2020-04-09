@@ -84,13 +84,13 @@ jobs:
           command: |
             GOOS=windows GOARCH=amd64 go build -v -o .target/espresso.exe cmd/main.go
             cp .target/espresso.exe espresso.exe
-            zip /tmp/artifacts/cleanup-windows-amd64.zip espresso.exe
+            zip /tmp/artifacts/espresso-windows-amd64.zip espresso.exe
       - persist_to_workspace:
           root: /tmp/artifacts
           paths:
             - espresso-linux-amd64.tar.gz
             - espresso-macos-amd64.tar.gz
-            - cleanup-windows-amd64.zip
+            - espresso-windows-amd64.zip
 
   espresso-release-gh:
     docker:
