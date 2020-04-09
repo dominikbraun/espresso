@@ -106,7 +106,6 @@ jobs:
                 -u "${CIRCLE_PROJECT_USERNAME}" \
                 -r "${CIRCLE_PROJECT_REPONAME}" \
                 -c "${CIRCLE_SHA1}" \
-                -n "Espresso ${CIRCLE_TAG}" \
                 -delete "${CIRCLE_TAG}" \
                 artifacts/
 
