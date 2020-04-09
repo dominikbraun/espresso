@@ -133,6 +133,12 @@ workflows:
       - espresso-release-gh:
           requires:
             - espresso-build-releases
+          filters:
+            tags:
+              only: /.*/
       - espresso-release-docker:
           requires:
             - espresso-release-gh
+          filters:
+            tags:
+              only: /.*/
