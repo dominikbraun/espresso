@@ -84,7 +84,7 @@ jobs:
           command: |
             GOOS=windows GOARCH=amd64 go build -v -o .target/espresso.exe cmd/main.go
             cp .target/espresso.exe espresso.exe
-            zip /tmp/artifacts/cleanup-windows-amd64.zip cleanup.exe
+            zip /tmp/artifacts/cleanup-windows-amd64.zip espresso.exe
       - persist_to_workspace:
           root: /tmp/artifacts
           paths:
