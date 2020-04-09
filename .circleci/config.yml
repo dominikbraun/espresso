@@ -123,11 +123,10 @@ workflows:
           requires:
             - espresso-test
           filters:
-            branches:
-              ignore:
-                - /.*/
             tags:
               only: /^\d+\.\d+\.\d+$/
+            branches:
+              ignore: /.*/
       - espresso-release-gh:
           requires:
             - espresso-build-releases
