@@ -12,8 +12,9 @@ import (
 
 const (
 	settingsFile string = "site"
-	version      string = "UNSPECIFIED"
 )
+
+var version = "UNSPECIFIED"
 
 // func main builds all CLI commands and processes the CLI input.
 func main() {
