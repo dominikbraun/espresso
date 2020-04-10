@@ -3,6 +3,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/dominikbraun/espresso/config"
 	"github.com/dominikbraun/espresso/core"
 	"github.com/spf13/cobra"
@@ -11,6 +12,7 @@ import (
 
 const (
 	settingsFile string = "site"
+	version      string = "UNSPECIFIED"
 )
 
 // func main builds all CLI commands and processes the CLI input.
@@ -37,7 +39,16 @@ func main() {
 		},
 	}
 
+	versionCmd := &cobra.Command{
+		Use: "version",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			fmt.Printf("Espresso %s\n", version)
+			return nil
+		},
+	}
+
 	espressoCmd.AddCommand(buildCmd)
+	espressoCmd.AddCommand(versionCmd)
 
 	if err := espressoCmd.Execute(); err != nil {
 		log.Fatal(err)
