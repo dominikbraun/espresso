@@ -70,19 +70,22 @@ jobs:
       - run:
           name: Build and pack Espresso for Linux
           command: |
-            GOOS=linux GOARCH=amd64 go build -v -o .target/espresso cmd/main.go
+            GOOS=linux GOARCH=amd64 go build -v -ldflags "-X main.version=${CIRCLE_TAG}" \
+              -o .target/espresso cmd/main.go
             cp .target/espresso espresso
             tar -czf /tmp/artifacts/espresso-linux-amd64.tar.gz espresso
       - run:
           name: Build and pack Espresso for macOS
           command: |
-            GOOS=darwin GOARCH=amd64 go build -v -o .target/espresso cmd/main.go
+            GOOS=darwin GOARCH=amd64 go build -v -ldflags "-X main.version=${CIRCLE_TAG}" \
+              -o .target/espresso cmd/main.go
             cp .target/espresso espresso
             tar -czf /tmp/artifacts/espresso-macos-amd64.tar.gz espresso
       - run:
           name: Build and pack Espresso for Windows
           command: |
-            GOOS=windows GOARCH=amd64 go build -v -o .target/espresso.exe cmd/main.go
+            GOOS=windows GOARCH=amd64 go build -v -ldflags "-X main.version=${CIRCLE_TAG}" \
+              -o .target/espresso.exe cmd/main.go
             cp .target/espresso.exe espresso.exe
             zip /tmp/artifacts/espresso-windows-amd64.zip espresso.exe
       - persist_to_workspace:
