@@ -1,19 +1,23 @@
+// Package model provides all domain models representing the individual
+// site components.
 package model
 
+// Page represents a particular page of the website. This type provides
+// data required for every kind of page and is useful for embedding.
 type Page struct {
-	Route string
+	// Path may only contain "/" characters as directory separators. This
+	// constraint has to be taken into account on each instantiation.
+	Path string
 }
 
+// ArticlePage is a website page type that holds an article.
 type ArticlePage struct {
 	Page
 	Article Article
 }
 
-func NewArticlePage(route string, article Article) *ArticlePage {
-	a := ArticlePage{
-		Page:    Page{Route: route},
-		Article: article,
-	}
-
-	return &a
+// ArticleListPage is a website page type that holds a list of articles.
+type ArticleListPage struct {
+	Page
+	Articles []*Article
 }

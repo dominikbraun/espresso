@@ -1,3 +1,4 @@
+// Package parser provides implementations for parsing content files.
 package parser
 
 import (
@@ -9,10 +10,13 @@ import (
 	"time"
 )
 
+// Markdown is a Parser implementation for parsing Markdown files and
+// converting them to domain models.
 type Markdown struct {
 	inner goldmark.Markdown
 }
 
+// NewMarkdown creates and initializes a new Markdown parser.
 func NewMarkdown() *Markdown {
 	m := Markdown{
 		inner: goldmark.New(goldmark.WithExtensions(meta.Meta)),
@@ -20,6 +24,9 @@ func NewMarkdown() *Markdown {
 	return &m
 }
 
+// ParseArticle implements Parser.ParseArticle. It takes the contents
+// of a Markdown file as a []byte, parses the contents as HTML and
+// populates the article metadata with metadata form the Markdown file.
 func (m *Markdown) ParseArticle(source []byte) (model.Article, error) {
 	var buf bytes.Buffer
 	ctx := parser.NewContext()
@@ -38,6 +45,9 @@ func (m *Markdown) ParseArticle(source []byte) (model.Article, error) {
 	return article, nil
 }
 
+// readMetadata populates an article's metadata fields with values from
+// a metadata map as it is returned by the meta.Get function. Note that
+// all metadata keys are case-sensitive.
 func (m *Markdown) readMetadata(article *model.Article, metadata map[string]interface{}) error {
 	if metadata["Title"] != nil {
 		article.Title = metadata["Title"].(string)
@@ -63,6 +73,13 @@ func (m *Markdown) readMetadata(article *model.Article, metadata map[string]inte
 		tags, _ := metadata["Tags"].([]interface{})
 		for i := 0; i < len(tags); i++ {
 			article.Tags = append(article.Tags, tags[i].(string))
+		}
+	}
+
+	if metadata["Related"] != nil {
+		related, _ := metadata["Related"].([]interface{})
+		for i := 0; i < len(related); i++ {
+			article.RelatedLinks = append(article.RelatedLinks, related[i].(string))
 		}
 	}
 

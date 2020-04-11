@@ -1,18 +1,22 @@
+// Package main provides the Espresso commands, parses the CLI input and
+// calls the appropriate Espresso core functions for further processing.
 package main
 
 import (
+	"fmt"
+	"github.com/dominikbraun/espresso/config"
 	"github.com/dominikbraun/espresso/core"
-	"github.com/dominikbraun/espresso/parser"
-	"github.com/dominikbraun/espresso/settings"
 	"github.com/spf13/cobra"
 	"log"
 )
 
 const (
-	settingsPath string = "."
 	settingsFile string = "site"
 )
 
+var version = "UNSPECIFIED"
+
+// func main builds all CLI commands and processes the CLI input.
 func main() {
 	espressoCmd := &cobra.Command{
 		Use: "espresso",
@@ -26,19 +30,26 @@ func main() {
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			buildPath := args[0]
-			var s settings.Site
+			var s config.Site
 
-			if err := settings.FromFile(settingsPath, settingsFile, &s); err != nil {
+			if err := config.FromFile(buildPath, settingsFile, &s); err != nil {
 				return err
 			}
 
-			espresso := core.NewEspresso(buildPath, &s, parser.NewMarkdown())
+			return core.RunBuild(buildPath, &s)
+		},
+	}
 
-			return espresso.RunBuild()
+	versionCmd := &cobra.Command{
+		Use: "version",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			fmt.Printf("Espresso %s\n", version)
+			return nil
 		},
 	}
 
 	espressoCmd.AddCommand(buildCmd)
+	espressoCmd.AddCommand(versionCmd)
 
 	if err := espressoCmd.Execute(); err != nil {
 		log.Fatal(err)
