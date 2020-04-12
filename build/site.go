@@ -5,15 +5,13 @@ package build
 import (
 	"fmt"
 	"github.com/dominikbraun/espresso/model"
-	"path/filepath"
-	"strings"
 )
 
 // Site represents the actual website. It is a generic data model that
 // holds all components and pages and can be rendered to a static site.
 type Site struct {
 	Nav    *model.Nav
-	root   Route
+	routes map[string]*RouteInfo
 	Footer *model.Footer
 }
 
@@ -38,13 +36,15 @@ type Route struct {
 	Children map[string]*Route
 }
 
+type RouteInfo struct {
+	Pages    []*model.ArticlePage
+	ListPage *model.ArticleListPage
+}
+
 // newSite creates and initializes a new Site instance.
 func newSite() *Site {
 	s := Site{
-		root: Route{
-			Pages:    make([]*model.ArticlePage, 0),
-			Children: make(map[string]*Route),
-		},
+		routes: make(map[string]*RouteInfo),
 	}
 	return &s
 }
@@ -64,37 +64,23 @@ func newRoute() *Route {
 
 // registerPage registers a given page under the route (path) that is
 // stored in page.Path. This path must not end with a trailing slash.
-//
-// If the route doesn't exist yet, all of its required child-routes are
-// created until the entire page path is depicted.
 func (s *Site) registerPage(page *model.ArticlePage) {
-	node := &s.root
-	segments := strings.Split(page.Path, "/")
-
-	for i, seg := range segments {
-		// Create the route with under segment key if it doesn't exist.
-		if _, exists := node.Children[seg]; !exists {
-			node.Children[seg] = newRoute()
-			// The current path consists of all previous path segments
-			// up to the current segment. This path will be stored.
-			path := filepath.FromSlash(filepath.Join(segments[:i]...))
-			node.Children[seg].Path = path
+	if _, exists := s.routes[page.Path]; !exists {
+		s.routes[page.Path] = &RouteInfo{
+			Pages: make([]*model.ArticlePage, 0),
 		}
-		// Store the page in the current segment if it is the last one.
-		if i == len(segments)-1 {
-			node.Children[seg].Pages = append(node.Children[seg].Pages, page)
-			break
-		}
-		// Walk down the tree to the next segment.
-		node = node.Children[seg]
 	}
+
+	s.routes[page.Path].Pages = append(s.routes[page.Path].Pages, page)
 }
 
 // WalkRoutes walks all site routes recursively and invokes a function
 // for each route. depth specifies the maximal depth that the route tree
 // will be walked down. Use -1 to walk down to the lowest level.
-func (s *Site) WalkRoutes(walkFn func(r *Route), depth int) {
-	s.walkRoute(&s.root, walkFn, depth, 0)
+func (s *Site) WalkRoutes(walkFn func(r string, i *RouteInfo)) {
+	for route, info := range s.routes {
+		walkFn(route, info)
+	}
 }
 
 // walkRoute is used internally by WalkRoutes and should not be called
@@ -115,21 +101,12 @@ func (s *Site) walkRoute(route *Route, walkFn func(r *Route), depth int, current
 // page with the given ID in that path. Returns an error if the either
 // the path or the article ID does not exist.
 func (s *Site) resolvePath(path string, id string) (*model.ArticlePage, error) {
-	node := &s.root
-	segments := strings.Split(path, "/")
-
-	for i, seg := range segments {
-		if _, exists := node.Children[seg]; !exists {
-			return nil, fmt.Errorf("the sub-route `%s` does not exist", seg)
-		}
-		if i == len(segments)-1 {
-			for _, page := range node.Children[seg].Pages {
-				if page.Article.ID == id {
-					return page, nil
-				}
+	if info, exists := s.routes[path]; exists {
+		for _, p := range info.Pages {
+			if p.Article.ID == id {
+				return p, nil
 			}
 		}
-		node = node.Children[seg]
 	}
 
 	return nil, fmt.Errorf("article `%s` not found in `%s`", id, path)
