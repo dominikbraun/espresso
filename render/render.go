@@ -45,12 +45,12 @@ func AsWebsite(ctx Context, site *build.Site) error {
 // streamPages walks down the route tree and sends all pages through
 // the pages channel, which is used to receive and build these pages.
 func streamPages(ctx *Context, site *build.Site, pages chan<- *model.ArticlePage) {
-	site.WalkRoutes(func(r *build.Route) {
-		for _, page := range r.Pages {
+	site.WalkRoutes(func(r string, i *build.RouteInfo) {
+		for _, page := range i.Pages {
 			pages <- page
 		}
-		_ = renderArticleListPage(ctx, r.ListPage)
-	}, -1)
+		_ = renderArticleListPage(ctx, i.ListPage)
+	})
 
 	close(pages)
 }

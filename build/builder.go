@@ -111,15 +111,17 @@ func (b *builder) buildNav() error {
 	}
 
 	if !b.ctx.Settings.Nav.Override {
-		b.model.WalkRoutes(func(r *Route) {
-			for seg, _ := range r.Children {
+		b.model.WalkRoutes(func(r string, i *RouteInfo) {
+			segments := strings.Split(r, "/")
+			// Only process routes with a depth of 1.
+			if len(segments) == 1 {
 				item := model.NavItem{
-					Label:  strings.Title(seg),
-					Target: seg,
+					Label:  strings.Title(segments[0]),
+					Target: segments[0],
 				}
 				nav.Items = append(nav.Items, item)
 			}
-		}, 1)
+		})
 	}
 
 	b.model.Nav = nav
@@ -131,16 +133,16 @@ func (b *builder) buildNav() error {
 // routes's list page model.
 func (b *builder) buildListPages() error {
 	b.model.
-		WalkRoutes(func(r *Route) {
-			r.ListPage = &model.ArticleListPage{
-				Page:     model.Page{Path: r.Path},
-				Articles: make([]*model.Article, len(r.Pages)),
+		WalkRoutes(func(r string, i *RouteInfo) {
+			i.ListPage = &model.ArticleListPage{
+				Page:     model.Page{Path: r},
+				Articles: make([]*model.Article, len(i.Pages)),
 			}
 
-			for i, page := range r.Pages {
-				r.ListPage.Articles[i] = &page.Article
+			for n, page := range i.Pages {
+				i.ListPage.Articles[n] = &page.Article
 			}
-		}, -1)
+		})
 
 	return nil
 }
@@ -150,8 +152,8 @@ func (b *builder) buildListPages() error {
 // the user to access the fields of each article in his templates.
 func (b *builder) buildRelated() error {
 	b.model.
-		WalkRoutes(func(r *Route) {
-			for _, p := range r.Pages {
+		WalkRoutes(func(r string, i *RouteInfo) {
+			for _, p := range i.Pages {
 				for _, link := range p.Article.RelatedLinks {
 					// A `link` consists of an Espresso path like `/coffee`
 					// and an article ID like `coffee-roasting-basics.md`.
@@ -164,7 +166,7 @@ func (b *builder) buildRelated() error {
 					page.Article.Related = append(page.Article.Related, &page.Article)
 				}
 			}
-		}, -1)
+		})
 
 	return nil
 }
