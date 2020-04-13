@@ -22,15 +22,15 @@ func TestRegisterPage(t *testing.T) {
 		Article: model.Article{ID: "about-me"},
 	})
 
-	if _, ok := site.root.Children["content"]; !ok {
+	if _, ok := site.routes["content"]; !ok {
 		t.Errorf("Could not find %s segment", "content")
 	}
 
-	if _, ok := site.root.Children["content"].Children["coffee"]; !ok {
+	if _, ok := site.routes["content/coffee"]; !ok {
 		t.Errorf("Could not find %s segment", "coffee")
 	}
 
-	if len(site.root.Children["content"].Children["coffee"].Pages) < 1 {
+	if len(site.routes["content/coffee"].Pages) < 1 {
 		t.Errorf("Could not find page under %s", "content/coffee")
 	}
 }
