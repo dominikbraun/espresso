@@ -75,7 +75,11 @@ func (b *builder) buildPage(source []byte, file string, mode registerMode) (*mod
 		Article: article,
 	}
 
-	if mode == DirectRegister {
+	// The article ID is `index` if an `index.md` file has been created
+	// by the user. In this case, it will be registered as an IndexPage.
+	if article.ID == "index" {
+		b.registerIndexPage(page)
+	} else {
 		b.registerPage(page)
 	}
 
@@ -90,6 +94,16 @@ func (b *builder) registerPage(page *model.ArticlePage) {
 	b.mutex.Lock()
 	defer b.mutex.Unlock()
 	b.model.registerPage(page)
+}
+
+// registerIndexPage registers an index page to the builder's site
+// model for the page's route.
+//
+// registerPage is safe for concurrent invocation.
+func (b *builder) registerIndexPage(indexPage *model.ArticlePage) {
+	b.mutex.Lock()
+	defer b.mutex.Unlock()
+	b.model.registerIndexPage(indexPage)
 }
 
 // buildNav attempts to create a model.Nav from the existing pages that

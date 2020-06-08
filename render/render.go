@@ -49,7 +49,11 @@ func streamPages(ctx *Context, site *build.Site, pages chan<- *model.ArticlePage
 		for _, page := range i.Pages {
 			pages <- page
 		}
-		_ = renderArticleListPage(ctx, i.ListPage)
+		if i.IndexPage != nil {
+			_ = renderIndexPage(ctx, i.IndexPage)
+		} else {
+			_ = renderArticleListPage(ctx, i.ListPage)
+		}
 	})
 
 	close(pages)
@@ -75,8 +79,7 @@ func renderArticlePage(ctx *Context, page *model.ArticlePage) error {
 	return nil
 }
 
-// renderArticleListPage renders a given ArticleListPage as an HTML
-// file.
+// renderArticleListPage renders a given ArticleListPage.
 func renderArticleListPage(ctx *Context, page *model.ArticleListPage) error {
 	pagePath := filepath.Join(ctx.TargetDir, page.Path)
 
@@ -85,6 +88,20 @@ func renderArticleListPage(ctx *Context, page *model.ArticleListPage) error {
 	}
 
 	return nil
+}
+
+// renderArticleListPage renders a given index page in its page path.
+func renderIndexPage(ctx *Context, indexPage *model.ArticlePage) error {
+	pagePath := filepath.Join(ctx.TargetDir, indexPage.Path)
+
+	handle, err := filesystem.CreateFile(filepath.Join(pagePath, indexFile))
+	if err != nil {
+		return err
+	}
+
+	tplPath := filepath.Join(ctx.TemplateDir, template.IndexPage)
+
+	return template.Render(tplPath, indexPage, handle)
 }
 
 // renderPage is the common function for rendering any page model. It

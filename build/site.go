@@ -17,10 +17,15 @@ type Site struct {
 
 // RouteInfo holds the contents of a route. While the route itself is
 // a map key, the value of such a map is a RouteInfo instance. Each
-// route contains multiple pages as well as a summarizing list page.
+// route contains multiple pages as well as a summarizing page.
+//
+// If the user provides their own `index.md` file, this page will be
+// built as IndexPage and ListPage is nil. Otherwise, ListPage will be
+// generated automatically and IndexPage is nil.
 type RouteInfo struct {
-	Pages    []*model.ArticlePage
-	ListPage *model.ArticleListPage
+	Pages     []*model.ArticlePage
+	ListPage  *model.ArticleListPage
+	IndexPage *model.ArticlePage
 }
 
 // newSite creates and initializes a new Site instance.
@@ -41,6 +46,18 @@ func (s *Site) registerPage(page *model.ArticlePage) {
 	}
 
 	s.routes[page.Path].Pages = append(s.routes[page.Path].Pages, page)
+}
+
+// registerIndexPage registers an index page when it has been provided
+// by the user and built by Espresso.
+func (s *Site) registerIndexPage(indexPage *model.ArticlePage) {
+	if _, exists := s.routes[indexPage.Path]; !exists {
+		s.routes[indexPage.Path] = &RouteInfo{
+			Pages: make([]*model.ArticlePage, 0),
+		}
+	}
+
+	s.routes[indexPage.Path].IndexPage = indexPage
 }
 
 // WalkRoutes iterates over all routes of the site model and invokes a
