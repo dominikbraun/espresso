@@ -10,11 +10,13 @@ import (
 	"sync"
 )
 
-type RegisterMode uint
+// registerMode specified whether a freshly built page should be
+// registered directly in the site model directly or not.
+type registerMode uint
 
 const (
-	NoRegister     RegisterMode = 0
-	DirectRegister RegisterMode = 1
+	NoRegister     registerMode = 0
+	DirectRegister registerMode = 1
 )
 
 // builder is the type used for performing the actual build. It knows
@@ -43,7 +45,7 @@ func newBuilder(ctx Context) *builder {
 //
 // buildPage is safe for concurrent invocation. The file path must contain
 // the build path.
-func (b *builder) buildPage(source []byte, file string, mode RegisterMode) (*model.ArticlePage, error) {
+func (b *builder) buildPage(source []byte, file string, mode registerMode) (*model.ArticlePage, error) {
 	article, err := b.ctx.Parser.ParseArticle(source)
 	if err != nil {
 		return nil, err

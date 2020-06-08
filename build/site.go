@@ -15,6 +15,9 @@ type Site struct {
 	Footer *model.Footer
 }
 
+// RouteInfo holds the contents of a route. While the route itself is
+// a map key, the value of such a map is a RouteInfo instance. Each
+// route contains multiple pages as well as a summarizing list page.
 type RouteInfo struct {
 	Pages    []*model.ArticlePage
 	ListPage *model.ArticleListPage
