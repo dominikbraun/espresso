@@ -37,6 +37,7 @@ func Run(ctx Context, files <-chan string) *Site {
 
 	_ = builder.buildNav()
 	_ = builder.buildListPages()
+	_ = builder.addArticlePagesToIndexPages()
 	_ = builder.buildRelated()
 	_ = builder.buildFooter()
 

@@ -158,6 +158,11 @@ func (b *builder) buildNav() error {
 func (b *builder) buildListPages() error {
 	b.model.
 		WalkRoutes(func(r string, i *RouteInfo) {
+			// Skip routes for which the user has provided an index page.
+			// In this case, the route's ListPage remains nil.
+			if i.IndexPage != nil {
+				return
+			}
 			i.ListPage = &model.ListPage{
 				Page:     model.Page{Path: r},
 				Articles: make([]*model.Article, len(i.Pages)),
@@ -166,6 +171,27 @@ func (b *builder) buildListPages() error {
 			for n, page := range i.Pages {
 				i.ListPage.Articles[n] = &page.Article
 			}
+		})
+
+	return nil
+}
+
+// addArticlePagesToIndexPages adds all built articles to each IndexPage
+// by appending a pointer to each article page in the ArticlePages slice.
+//
+// ToDo: Find a more efficient way for traversing all routes.
+func (b *builder) addArticlePagesToIndexPages() error {
+	b.model.
+		WalkRoutes(func(r string, i *RouteInfo) {
+			// Don't walk all routes again if there's no index page.
+			if i.IndexPage == nil {
+				return
+			}
+			b.model.WalkRoutes(func(r2 string, i2 *RouteInfo) {
+				for _, page := range i2.Pages {
+					i.IndexPage.ArticlePages = append(i.IndexPage.ArticlePages, page)
+				}
+			})
 		})
 
 	return nil

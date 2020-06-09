@@ -30,5 +30,6 @@ type ListPage struct {
 // ListPage.
 type IndexPage struct {
 	Page
-	Article Article
+	Article      Article
+	ArticlePages []*ArticlePage
 }
