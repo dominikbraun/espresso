@@ -25,7 +25,7 @@ type Site struct {
 type RouteInfo struct {
 	Pages     []*model.ArticlePage
 	ListPage  *model.ArticleListPage
-	IndexPage *model.ArticlePage
+	IndexPage *model.IndexPage
 }
 
 // newSite creates and initializes a new Site instance.
@@ -50,7 +50,7 @@ func (s *Site) registerPage(page *model.ArticlePage) {
 
 // registerIndexPage registers an index page when it has been provided
 // by the user and built by Espresso.
-func (s *Site) registerIndexPage(indexPage *model.ArticlePage) {
+func (s *Site) registerIndexPage(indexPage *model.IndexPage) {
 	if _, exists := s.routes[indexPage.Path]; !exists {
 		s.routes[indexPage.Path] = &RouteInfo{
 			Pages: make([]*model.ArticlePage, 0),

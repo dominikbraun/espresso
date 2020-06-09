@@ -21,3 +21,14 @@ type ArticleListPage struct {
 	Page
 	Articles []*Article
 }
+
+// IndexPage is an index page provided by the user. If a content directory
+// contains an `index.md` file, this file will be parsed and stored as the
+// IndexPage for a route.
+//
+// This IndexPage will be rendered instead of the  route's auto-generated
+// ListPage.
+type IndexPage struct {
+	Page
+	Article Article
+}

@@ -75,12 +75,19 @@ func (b *builder) buildPage(source []byte, file string, mode registerMode) (*mod
 		Article: article,
 	}
 
-	// The article ID is `index` if an `index.md` file has been created
-	// by the user. In this case, it will be registered as an IndexPage.
+	// The user is allowed to provide their own `index.md` file as an
+	// index page. In this case, the article ID equals `index` and the
+	// article will be rendered as the route's index page.
 	if article.ID == "index" {
-		b.registerIndexPage(page)
+		b.registerIndexPage(&model.IndexPage{
+			Page:    model.Page{Path: route},
+			Article: article,
+		})
 	} else {
-		b.registerPage(page)
+		b.registerPage(&model.ArticlePage{
+			Page:    model.Page{Path: route},
+			Article: article,
+		})
 	}
 
 	return page, nil
@@ -100,7 +107,7 @@ func (b *builder) registerPage(page *model.ArticlePage) {
 // model for the page's route.
 //
 // registerPage is safe for concurrent invocation.
-func (b *builder) registerIndexPage(indexPage *model.ArticlePage) {
+func (b *builder) registerIndexPage(indexPage *model.IndexPage) {
 	b.mutex.Lock()
 	defer b.mutex.Unlock()
 	b.model.registerIndexPage(indexPage)
@@ -129,6 +136,7 @@ func (b *builder) buildNav() error {
 	if !b.ctx.Settings.Nav.Override {
 		b.model.WalkRoutes(func(r string, i *RouteInfo) {
 			segments := strings.Split(r, "/")
+
 			// Only process routes with a depth of 1.
 			if len(segments) == 1 {
 				item := model.NavItem{

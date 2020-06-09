@@ -91,7 +91,7 @@ func renderArticleListPage(ctx *Context, page *model.ArticleListPage) error {
 }
 
 // renderArticleListPage renders a given index page in its page path.
-func renderIndexPage(ctx *Context, indexPage *model.ArticlePage) error {
+func renderIndexPage(ctx *Context, indexPage *model.IndexPage) error {
 	pagePath := filepath.Join(ctx.TargetDir, indexPage.Path)
 
 	if err := filesystem.CreateDir(pagePath, true); err != nil {
