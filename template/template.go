@@ -7,9 +7,9 @@ import (
 )
 
 const (
-	Article     string = "article.html"
-	ArticleList string = "article-list.html"
-	IndexPage   string = "index-page.html"
+	Article   string = "article.html"
+	ListPage  string = "list-page.html"
+	IndexPage string = "index-page.html"
 )
 
 // Render attempts to render the specified template file, populate

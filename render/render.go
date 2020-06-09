@@ -83,7 +83,7 @@ func renderArticlePage(ctx *Context, page *model.ArticlePage) error {
 func renderListPage(ctx *Context, page *model.ListPage) error {
 	pagePath := filepath.Join(ctx.TargetDir, page.Path)
 
-	if err := renderPage(ctx, pagePath, template.ArticleList, page); err != nil {
+	if err := renderPage(ctx, pagePath, template.ListPage, page); err != nil {
 		return err
 	}
 
