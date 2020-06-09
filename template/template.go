@@ -2,8 +2,8 @@
 package template
 
 import (
-	"html/template"
 	"io"
+	"text/template"
 )
 
 const (
