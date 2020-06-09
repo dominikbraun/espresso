@@ -94,13 +94,16 @@ func renderArticleListPage(ctx *Context, page *model.ArticleListPage) error {
 func renderIndexPage(ctx *Context, indexPage *model.ArticlePage) error {
 	pagePath := filepath.Join(ctx.TargetDir, indexPage.Path)
 
+	if err := filesystem.CreateDir(pagePath, true); err != nil {
+		return err
+	}
+
 	handle, err := filesystem.CreateFile(filepath.Join(pagePath, indexFile))
 	if err != nil {
 		return err
 	}
 
 	tplPath := filepath.Join(ctx.TemplateDir, template.IndexPage)
-
 	return template.Render(tplPath, indexPage, handle)
 }
 
@@ -118,7 +121,6 @@ func renderPage(ctx *Context, path, tpl string, data interface{}) error {
 	}
 
 	tplPath := filepath.Join(ctx.TemplateDir, tpl)
-
 	return template.Render(tplPath, data, handle)
 }
 
