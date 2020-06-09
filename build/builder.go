@@ -158,7 +158,7 @@ func (b *builder) buildNav() error {
 func (b *builder) buildListPages() error {
 	b.model.
 		WalkRoutes(func(r string, i *RouteInfo) {
-			i.ListPage = &model.ArticleListPage{
+			i.ListPage = &model.ListPage{
 				Page:     model.Page{Path: r},
 				Articles: make([]*model.Article, len(i.Pages)),
 			}

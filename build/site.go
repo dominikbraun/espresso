@@ -24,7 +24,7 @@ type Site struct {
 // generated automatically and IndexPage is nil.
 type RouteInfo struct {
 	Pages     []*model.ArticlePage
-	ListPage  *model.ArticleListPage
+	ListPage  *model.ListPage
 	IndexPage *model.IndexPage
 }
 

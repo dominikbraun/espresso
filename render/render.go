@@ -52,7 +52,7 @@ func streamPages(ctx *Context, site *build.Site, pages chan<- *model.ArticlePage
 		if i.IndexPage != nil {
 			_ = renderIndexPage(ctx, i.IndexPage)
 		} else {
-			_ = renderArticleListPage(ctx, i.ListPage)
+			_ = renderListPage(ctx, i.ListPage)
 		}
 	})
 
@@ -79,8 +79,8 @@ func renderArticlePage(ctx *Context, page *model.ArticlePage) error {
 	return nil
 }
 
-// renderArticleListPage renders a given ArticleListPage.
-func renderArticleListPage(ctx *Context, page *model.ArticleListPage) error {
+// renderListPage renders a given ListPage.
+func renderListPage(ctx *Context, page *model.ListPage) error {
 	pagePath := filepath.Join(ctx.TargetDir, page.Path)
 
 	if err := renderPage(ctx, pagePath, template.ArticleList, page); err != nil {
@@ -90,7 +90,12 @@ func renderArticleListPage(ctx *Context, page *model.ArticleListPage) error {
 	return nil
 }
 
-// renderArticleListPage renders a given index page in its page path.
+// renderListPage renders a given index page in its page path.
+//
+// Since renderPage creates a directory structure corresponding to
+// the page path + the article ID and an `index.html` inside of it,
+// it does not match the use case for IndexPage where the resulting
+// path must not be /index/index.html but only /index.html instead.
 func renderIndexPage(ctx *Context, indexPage *model.IndexPage) error {
 	pagePath := filepath.Join(ctx.TargetDir, indexPage.Path)
 

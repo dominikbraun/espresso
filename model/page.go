@@ -16,8 +16,8 @@ type ArticlePage struct {
 	Article Article
 }
 
-// ArticleListPage is a website page type that holds a list of articles.
-type ArticleListPage struct {
+// ListPage is a website page type that holds a list of articles.
+type ListPage struct {
 	Page
 	Articles []*Article
 }
