@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"github.com/dominikbraun/espresso/model"
 	"github.com/yuin/goldmark"
+	highlighting "github.com/yuin/goldmark-highlighting"
 	meta "github.com/yuin/goldmark-meta"
 	"github.com/yuin/goldmark/parser"
 	"time"
@@ -19,7 +20,9 @@ type Markdown struct {
 // NewMarkdown creates and initializes a new Markdown parser.
 func NewMarkdown() *Markdown {
 	m := Markdown{
-		inner: goldmark.New(goldmark.WithExtensions(meta.Meta)),
+		inner: goldmark.New(
+			goldmark.WithExtensions(meta.Meta, highlighting.Highlighting),
+		),
 	}
 	return &m
 }
