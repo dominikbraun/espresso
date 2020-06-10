@@ -18,6 +18,8 @@ var version = "UNSPECIFIED"
 
 // func main builds all CLI commands and processes the CLI input.
 func main() {
+	var options core.Options
+
 	espressoCmd := &cobra.Command{
 		Use: "espresso",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -36,9 +38,11 @@ func main() {
 				return err
 			}
 
-			return core.RunBuild(buildPath, &s)
+			return core.RunBuild(buildPath, &s, &options)
 		},
 	}
+
+	buildCmd.Flags().StringVarP(&options.OutputDir, "output-dir", "o", "", `Path to the target directory`)
 
 	versionCmd := &cobra.Command{
 		Use: "version",

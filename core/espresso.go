@@ -11,11 +11,20 @@ import (
 	"path/filepath"
 )
 
+type Options struct {
+	OutputDir string
+}
+
 // RunBuild performs a website build based on content files and settings
 // stored in the build path, rendering a complete static website.
-func RunBuild(buildPath string, settings *config.Site) error {
+func RunBuild(buildPath string, settings *config.Site, options *Options) error {
 	files := make(chan string)
 	contentPath := filepath.Join(buildPath, config.ContentDir)
+	targetDir := filepath.Join(buildPath, config.TargetDir)
+
+	if options.OutputDir != "" {
+		targetDir = options.OutputDir
+	}
 
 	go func() {
 		_ = filesystem.Stream(contentPath, filesystem.MarkdownOnly, files)
@@ -30,7 +39,7 @@ func RunBuild(buildPath string, settings *config.Site) error {
 	if err := render.AsWebsite(render.Context{
 		TemplateDir: filepath.Join(buildPath, config.TemplateDir),
 		AssetDir:    filepath.Join(buildPath, config.AssetDir),
-		TargetDir:   filepath.Join(buildPath, config.TargetDir),
+		TargetDir:   targetDir,
 	}, site); err != nil {
 		return err
 	}
