@@ -7,7 +7,9 @@ package model
 type Page struct {
 	// Path may only contain "/" characters as directory separators. This
 	// constraint has to be taken into account on each instantiation.
-	Path string
+	Path   string
+	Nav    *Nav
+	Footer *Footer
 }
 
 // ArticlePage is a website page type that holds an article.

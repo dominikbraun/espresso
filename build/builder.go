@@ -70,7 +70,9 @@ func (b *builder) buildPage(source []byte, file string, mode registerMode) (*mod
 
 	page := &model.ArticlePage{
 		Page: model.Page{
-			Path: route,
+			Path:   route,
+			Nav:    b.model.Nav,
+			Footer: b.model.Footer,
 		},
 		Article: article,
 	}
