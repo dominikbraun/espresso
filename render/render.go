@@ -2,6 +2,7 @@
 package render
 
 import (
+	"fmt"
 	"github.com/dominikbraun/espresso/build"
 	"github.com/dominikbraun/espresso/config"
 	"github.com/dominikbraun/espresso/filesystem"
@@ -47,11 +48,19 @@ func AsWebsite(ctx Context, site *build.Site) error {
 func streamPages(ctx *Context, site *build.Site, pages chan<- *model.ArticlePage) {
 	site.WalkRoutes(func(r string, i *build.RouteInfo) {
 		for _, page := range i.Pages {
+			// ToDo: Assign nav and footer in the build process
+			page.Nav = site.Nav
+			page.Footer = site.Footer
 			pages <- page
 		}
+
 		if i.IndexPage != nil {
+			i.IndexPage.Nav = site.Nav
+			i.IndexPage.Footer = site.Footer
 			_ = renderIndexPage(ctx, i.IndexPage)
 		} else {
+			i.ListPage.Nav = site.Nav
+			i.ListPage.Nav = site.Nav
 			_ = renderListPage(ctx, i.ListPage)
 		}
 	})
@@ -98,6 +107,11 @@ func renderListPage(ctx *Context, page *model.ListPage) error {
 // path must not be /index/index.html but only /index.html instead.
 func renderIndexPage(ctx *Context, indexPage *model.IndexPage) error {
 	pagePath := filepath.Join(ctx.TargetDir, indexPage.Path)
+
+	fmt.Printf("%v\n", indexPage.Nav)
+	for _, i := range indexPage.Nav.Items {
+		fmt.Println(i.Label)
+	}
 
 	if err := filesystem.CreateDir(pagePath, true); err != nil {
 		return err

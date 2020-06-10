@@ -68,13 +68,8 @@ func (b *builder) buildPage(source []byte, file string, mode registerMode) (*mod
 	route := filepath.ToSlash(filepath.Dir(relativePath))
 	article.ID = strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))
 
-	page := &model.ArticlePage{
-		Page: model.Page{
-			Path:   route,
-			Nav:    b.model.Nav,
-			Footer: b.model.Footer,
-		},
-		Article: article,
+	page := model.Page{
+		Path: route,
 	}
 
 	// The user is allowed to provide their own `index.md` file as an
@@ -82,17 +77,20 @@ func (b *builder) buildPage(source []byte, file string, mode registerMode) (*mod
 	// article will be rendered as the route's index page.
 	if article.ID == "index" {
 		b.registerIndexPage(&model.IndexPage{
-			Page:    model.Page{Path: route},
+			Page:    page,
 			Article: article,
 		})
 	} else {
 		b.registerPage(&model.ArticlePage{
-			Page:    model.Page{Path: route},
+			Page:    page,
 			Article: article,
 		})
 	}
 
-	return page, nil
+	return &model.ArticlePage{
+		Page:    page,
+		Article: article,
+	}, nil
 }
 
 // registerPage registers a page model to the builder's site model.
