@@ -2,6 +2,8 @@
 // site components.
 package model
 
+import "strings"
+
 // Page represents a particular page of the website. This type provides
 // data required for every kind of page and is useful for embedding.
 type Page struct {
@@ -10,6 +12,16 @@ type Page struct {
 	Path   string
 	Nav    *Nav
 	Footer *Footer
+}
+
+// RelativePath returns the page's relative path. By default, Espresso
+// stores all paths inside the content directory as absolute paths.
+func (p *Page) RelativePath() string {
+	// According to Espresso's path model, this actually shouldn't happen.
+	if !strings.HasPrefix(p.Path, "/") {
+		return p.Path
+	}
+	return p.Path[1:]
 }
 
 // ArticlePage is a website page type that holds an article.

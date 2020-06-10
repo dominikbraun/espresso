@@ -2,7 +2,6 @@
 package render
 
 import (
-	"fmt"
 	"github.com/dominikbraun/espresso/build"
 	"github.com/dominikbraun/espresso/config"
 	"github.com/dominikbraun/espresso/filesystem"
@@ -107,11 +106,6 @@ func renderListPage(ctx *Context, page *model.ListPage) error {
 // path must not be /index/index.html but only /index.html instead.
 func renderIndexPage(ctx *Context, indexPage *model.IndexPage) error {
 	pagePath := filepath.Join(ctx.TargetDir, indexPage.Path)
-
-	fmt.Printf("%v\n", indexPage.Nav)
-	for _, i := range indexPage.Nav.Items {
-		fmt.Println(i.Label)
-	}
 
 	if err := filesystem.CreateDir(pagePath, true); err != nil {
 		return err
