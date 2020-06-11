@@ -12,8 +12,8 @@ type Article struct {
 	Author       string
 	Date         time.Time
 	Tags         []string
-	RelatedLinks []string
-	Related      []*Article
+	Related      []string
+	RelatedPages []*ArticlePage
 	Description  string
 	Content      string
 }

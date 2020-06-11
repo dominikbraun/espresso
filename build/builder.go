@@ -204,16 +204,16 @@ func (b *builder) buildRelated() error {
 	b.model.
 		WalkRoutes(func(r string, i *RouteInfo) {
 			for _, p := range i.Pages {
-				for _, link := range p.Article.RelatedLinks {
+				for _, link := range p.Article.Related {
 					// A `link` consists of an Espresso path like `/coffee`
-					// and an article ID like `coffee-roasting-basics.md`.
-					// These components are split here to resolve the path.
+					// and an article ID like `coffee-roasting-basics`. These
+					// components are split here to resolve the path.
 					path := link[:strings.LastIndex(link, "/")]
 					id := link[len(path)+1:]
 
 					// Load the page and its article by resolving its path.
 					page, _ := b.model.resolvePath(path, id)
-					page.Article.Related = append(page.Article.Related, &page.Article)
+					page.Article.RelatedPages = append(page.Article.RelatedPages, page)
 				}
 			}
 		})
