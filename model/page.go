@@ -33,7 +33,7 @@ type ArticlePage struct {
 // ListPage is a website page type that holds a list of articles.
 type ListPage struct {
 	Page
-	Articles []*Article
+	ArticlePages []*ArticlePage
 }
 
 // IndexPage is an index page provided by the user. If a content directory

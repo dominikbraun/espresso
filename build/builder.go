@@ -164,12 +164,12 @@ func (b *builder) buildListPages() error {
 				return
 			}
 			i.ListPage = &model.ListPage{
-				Page:     model.Page{Path: r},
-				Articles: make([]*model.Article, len(i.Pages)),
+				Page:         model.Page{Path: r},
+				ArticlePages: make([]*model.ArticlePage, len(i.Pages)),
 			}
 
 			for n, page := range i.Pages {
-				i.ListPage.Articles[n] = &page.Article
+				i.ListPage.ArticlePages[n] = page
 			}
 		})
 
