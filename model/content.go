@@ -16,4 +16,5 @@ type Article struct {
 	RelatedPages []*ArticlePage
 	Description  string
 	Content      string
+	Template     string
 }

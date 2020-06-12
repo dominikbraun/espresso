@@ -86,5 +86,9 @@ func (m *Markdown) readMetadata(article *model.Article, metadata map[string]inte
 		}
 	}
 
+	if metadata["Template"] != nil {
+		article.Template = metadata["Template"].(string)
+	}
+
 	return nil
 }

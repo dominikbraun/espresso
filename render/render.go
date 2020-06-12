@@ -79,8 +79,13 @@ func processQueue(ctx *Context, pages <-chan *model.ArticlePage, wg *sync.WaitGr
 // renderArticlePage renders a given ArticlePage as an HTML file.
 func renderArticlePage(ctx *Context, page *model.ArticlePage) error {
 	pagePath := filepath.Join(ctx.TargetDir, page.Path, page.Article.ID)
+	templateFile := template.Article
 
-	if err := renderPage(ctx, pagePath, template.Article, page); err != nil {
+	if page.Article.Template != "" {
+		templateFile = page.Article.Template
+	}
+
+	if err := renderPage(ctx, pagePath, templateFile, page); err != nil {
 		return err
 	}
 
@@ -116,7 +121,13 @@ func renderIndexPage(ctx *Context, indexPage *model.IndexPage) error {
 		return err
 	}
 
-	tplPath := filepath.Join(ctx.TemplateDir, template.IndexPage)
+	templateFile := template.IndexPage
+
+	if indexPage.Article.Template != "" {
+		templateFile = indexPage.Article.Template
+	}
+
+	tplPath := filepath.Join(ctx.TemplateDir, templateFile)
 	return template.Render(tplPath, indexPage, handle)
 }
 
