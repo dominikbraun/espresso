@@ -13,7 +13,7 @@ type Article struct {
 	Date         time.Time
 	Tags         []string
 	Img          string
-	ImgCredits   string
+	ImgCredit    string
 	Related      []string
 	RelatedPages []*ArticlePage
 	Description  string
