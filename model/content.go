@@ -12,6 +12,8 @@ type Article struct {
 	Author       string
 	Date         time.Time
 	Tags         []string
+	Img          string
+	ImgCredits   string
 	Related      []string
 	RelatedPages []*ArticlePage
 	Description  string

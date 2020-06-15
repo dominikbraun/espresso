@@ -79,6 +79,14 @@ func (m *Markdown) readMetadata(article *model.Article, metadata map[string]inte
 		}
 	}
 
+	if metadata["Img"] != nil {
+		article.Template = metadata["Img"].(string)
+	}
+
+	if metadata["ImgCredit"] != nil {
+		article.Template = metadata["ImgCredit"].(string)
+	}
+
 	if metadata["Related"] != nil {
 		related, _ := metadata["Related"].([]interface{})
 		for i := 0; i < len(related); i++ {
