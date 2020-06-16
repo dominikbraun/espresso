@@ -19,4 +19,10 @@ type Article struct {
 	Description  string
 	Content      string
 	Template     string
+	Meta
+}
+
+type Meta struct {
+	Hide   bool
+	Robots string
 }

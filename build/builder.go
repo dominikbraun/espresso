@@ -169,6 +169,9 @@ func (b *builder) buildListPages() error {
 			}
 
 			for n, page := range i.Pages {
+				if page.Article.Hide {
+					continue
+				}
 				i.ListPage.ArticlePages[n] = page
 			}
 		})
@@ -189,6 +192,9 @@ func (b *builder) addArticlePagesToIndexPages() error {
 			}
 			b.model.WalkRoutes(func(r2 string, i2 *RouteInfo) {
 				for _, page := range i2.Pages {
+					if page.Article.Hide {
+						continue
+					}
 					i.IndexPage.ArticlePages = append(i.IndexPage.ArticlePages, page)
 				}
 			})

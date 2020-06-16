@@ -98,5 +98,13 @@ func (m *Markdown) readMetadata(article *model.Article, metadata map[string]inte
 		article.Template = metadata["Template"].(string)
 	}
 
+	if metadata["Hide"] != nil {
+		article.Hide = metadata["Hide"].(bool)
+	}
+
+	if metadata["Robots"] != nil {
+		article.Robots = metadata["Robots"].(string)
+	}
+
 	return nil
 }
