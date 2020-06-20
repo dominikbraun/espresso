@@ -19,4 +19,5 @@ type Article struct {
 	Description  string
 	Content      string
 	Template     string
+	Hide         bool
 }
