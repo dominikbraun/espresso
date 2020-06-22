@@ -219,7 +219,7 @@ func (b *builder) buildRelated() error {
 
 					// Load the page and its article by resolving its path.
 					page, _ := b.model.resolvePath(path, id)
-					page.Article.RelatedPages = append(page.Article.RelatedPages, page)
+					p.Article.RelatedPages = append(p.Article.RelatedPages, page)
 				}
 			}
 		})

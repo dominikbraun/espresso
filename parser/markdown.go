@@ -102,9 +102,5 @@ func (m *Markdown) readMetadata(article *model.Article, metadata map[string]inte
 		article.Hide = metadata["Hide"].(bool)
 	}
 
-	if metadata["Robots"] != nil {
-		article.Robots = metadata["Robots"].(string)
-	}
-
 	return nil
 }
