@@ -6,6 +6,7 @@ import (
 	"github.com/dominikbraun/espresso/config"
 	"github.com/dominikbraun/espresso/model"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync"
 )
@@ -155,7 +156,7 @@ func (b *builder) buildNav() error {
 // buildListPages attempts to build overview pages for all categories.
 // For each route in the route tree, all articles are added to the
 // routes's list page model.
-func (b *builder) buildListPages() error {
+func (b *builder) buildListPages(sortPages bool) error {
 	b.model.
 		WalkRoutes(func(r string, i *RouteInfo) {
 			// Skip routes for which the user has provided an index page.
@@ -166,6 +167,12 @@ func (b *builder) buildListPages() error {
 			i.ListPage = &model.ListPage{
 				Page:         model.Page{Path: r},
 				ArticlePages: make([]*model.ArticlePage, len(i.Pages)),
+			}
+
+			if sortPages {
+				sort.Slice(i.Pages, func(a, b int) bool {
+					return i.Pages[a].Article.Date.After(i.Pages[b].Article.Date)
+				})
 			}
 
 			for n, page := range i.Pages {

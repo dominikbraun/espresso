@@ -36,7 +36,7 @@ func Run(ctx Context, files <-chan string) *Site {
 	wg.Wait()
 
 	_ = builder.buildNav()
-	_ = builder.buildListPages()
+	_ = builder.buildListPages(true)
 	_ = builder.addArticlePagesToIndexPages()
 	_ = builder.buildRelated()
 	_ = builder.buildFooter()
