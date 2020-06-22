@@ -5,6 +5,7 @@ package filesystem
 import (
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // MarkdownOnly is a predefined filter that only allows .md files
@@ -13,13 +14,24 @@ var MarkdownOnly = func(path string) bool {
 	return filepath.Ext(path) == ".md"
 }
 
+// NoUnderscores is a predefined filter that doesn't let pass
+// files starting with an underscore.
+var NoUnderscores = func(path string) bool {
+	return !strings.HasPrefix(path, "_")
+}
+
 // Stream streams all files in a given path that pass a given filter
 // by sending them through the files channel. Stream.
-func Stream(path string, filter func(path string) bool, files chan<- string) error {
+func Stream(path string, files chan<- string, filters ...func(path string) bool) error {
 	err := filepath.
 		Walk(path, func(path string, info os.FileInfo, err error) error {
-			if info.IsDir() || !filter(path) {
+			if info.IsDir() {
 				return nil
+			}
+			for _, filter := range filters {
+				if !filter(path) {
+					return nil
+				}
 			}
 
 			files <- path

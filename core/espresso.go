@@ -27,7 +27,7 @@ func RunBuild(buildPath string, settings *config.Site, options *Options) error {
 	}
 
 	go func() {
-		_ = filesystem.Stream(contentPath, filesystem.MarkdownOnly, files)
+		_ = filesystem.Stream(contentPath, files, filesystem.MarkdownOnly, filesystem.NoUnderscores)
 	}()
 
 	site := build.Run(build.Context{
