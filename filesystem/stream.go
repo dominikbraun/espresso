@@ -17,7 +17,7 @@ var MarkdownOnly = func(path string) bool {
 // NoUnderscores is a predefined filter that doesn't let pass
 // files starting with an underscore.
 var NoUnderscores = func(path string) bool {
-	return !strings.HasPrefix(path, "_")
+	return !strings.HasPrefix(filepath.Base(path), "_")
 }
 
 // Stream streams all files in a given path that pass a given filter
