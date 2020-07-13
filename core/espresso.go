@@ -7,12 +7,14 @@ import (
 	"github.com/dominikbraun/espresso/config"
 	"github.com/dominikbraun/espresso/filesystem"
 	"github.com/dominikbraun/espresso/parser"
+	"github.com/dominikbraun/espresso/plugins/atom"
 	"github.com/dominikbraun/espresso/render"
 	"path/filepath"
 )
 
 type Options struct {
 	OutputDir string
+	RenderRSS bool
 }
 
 // RunBuild performs a website build based on content files and settings
@@ -36,13 +38,35 @@ func RunBuild(buildPath string, settings *config.Site, options *Options) error {
 		Parser:    parser.NewMarkdown(),
 	}, files)
 
+	plugins := loadBuiltInPlugins(settings, options)
+
 	if err := render.AsWebsite(render.Context{
 		TemplateDir: filepath.Join(buildPath, config.TemplateDir),
 		AssetDir:    filepath.Join(buildPath, config.AssetDir),
 		TargetDir:   targetDir,
-	}, site); err != nil {
+	}, site, plugins...); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+// loadBuiltInPlugins reads the build options and initializes all required
+// built-in plugins using the site configuration.
+func loadBuiltInPlugins(settings *config.Site, options *Options) []render.Plugin {
+	plugins := make([]render.Plugin, 0)
+
+	if options.RenderRSS {
+		meta := atom.Meta{
+			Title:       settings.Title,
+			Link:        settings.BaseURL,
+			Description: settings.Description,
+			Author:      settings.Author,
+			Subtitle:    settings.Subtitle,
+			Copyright:   settings.Author,
+		}
+		plugins = append(plugins, atom.New(&meta))
+	}
+
+	return plugins
 }

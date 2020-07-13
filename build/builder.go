@@ -122,7 +122,7 @@ func (b *builder) registerIndexPage(indexPage *model.IndexPage) {
 // if this is specified in the site settings.
 func (b *builder) buildNav() error {
 	nav := &model.Nav{
-		Brand: b.ctx.Settings.Name,
+		Brand: b.ctx.Settings.Title,
 		Items: make([]model.NavItem, 0),
 	}
 
