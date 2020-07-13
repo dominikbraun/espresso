@@ -39,6 +39,10 @@ func AsWebsite(ctx Context, site *build.Site, plugins ...Plugin) error {
 
 	_ = copyAssetDir(&ctx)
 
+	for _, plugin := range plugins {
+		_ = plugin.Finalize(&ctx)
+	}
+
 	return nil
 }
 
@@ -53,7 +57,7 @@ func streamPages(
 	site.WalkRoutes(func(r string, i *build.RouteInfo) {
 		for _, page := range i.Pages {
 			for _, plugin := range plugins {
-				_ = plugin.ProcessArticlePage(page)
+				_ = plugin.ProcessArticlePage(ctx, page)
 			}
 			// ToDo: Assign nav and footer in the build process
 			page.Nav = site.Nav
