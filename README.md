@@ -16,6 +16,10 @@ Espresso is a Static Site Generator designed for Markdown-based content with foc
 * Zero Configuration: Provide a configuration only if you want to
 * Performance: Render thousands of articles in a few seconds
 
+## <img src="https://sternentstehung.de/espresso-ssg-dot.png"> Real-World Example
+
+A good example for an Espresso-built website is my own one: [dominikbraun.io](https://dominikbraun.io).
+
 ## <img src="https://sternentstehung.de/espresso-ssg-dot.png"> Installation
 
 ### Running Espresso natively
