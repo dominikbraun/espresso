@@ -2,10 +2,15 @@ package atom
 
 import (
 	"fmt"
+	"github.com/dominikbraun/espresso/filesystem"
 	"github.com/dominikbraun/espresso/model"
+	"github.com/dominikbraun/espresso/render"
 	"github.com/gorilla/feeds"
+	"path/filepath"
 	"time"
 )
+
+const filename string = "atom.xml"
 
 type Meta struct {
 	Title       string
@@ -36,7 +41,7 @@ func New(meta *Meta) *atom {
 	return &a
 }
 
-func (a *atom) ProcessArticlePage(page *model.ArticlePage) error {
+func (a *atom) ProcessArticlePage(_ *render.Context, page *model.ArticlePage) error {
 	item := &feeds.Item{
 		Title:       page.Article.Title,
 		Link:        &feeds.Link{Href: fmt.Sprintf("%s%s", page.Path, page.Article.ID)},
@@ -46,4 +51,14 @@ func (a *atom) ProcessArticlePage(page *model.ArticlePage) error {
 	a.feed.Items = append(a.feed.Items, item)
 
 	return nil
+}
+
+func (a *atom) Finalize(ctx *render.Context) error {
+	filePath := filepath.Join(ctx.TargetDir, filename)
+	atomFile, err := filesystem.CreateFile(filePath)
+	if err != nil {
+		return err
+	}
+
+	return a.feed.WriteAtom(atomFile)
 }
