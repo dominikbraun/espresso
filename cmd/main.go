@@ -43,6 +43,7 @@ func main() {
 	}
 
 	buildCmd.Flags().StringVarP(&options.OutputDir, "output-dir", "o", "", `Path to the target directory`)
+	buildCmd.Flags().BoolVar(&options.RenderRSS, "render-rss", false, `Render an Atom RSS feed`)
 
 	versionCmd := &cobra.Command{
 		Use: "version",

@@ -14,7 +14,7 @@ const filename string = "atom.xml"
 
 type Meta struct {
 	Title       string
-	Link        string
+	BaseURL     string
 	Description string
 	Author      string
 	Subtitle    string
@@ -22,14 +22,16 @@ type Meta struct {
 }
 
 type atom struct {
+	meta *Meta
 	feed *feeds.Feed
 }
 
 func New(meta *Meta) *atom {
 	a := atom{
+		meta: meta,
 		feed: &feeds.Feed{
 			Title:       meta.Title,
-			Link:        &feeds.Link{Href: meta.Link},
+			Link:        &feeds.Link{Href: meta.BaseURL},
 			Description: meta.Description,
 			Author:      &feeds.Author{Name: meta.Author},
 			Created:     time.Now(),
@@ -44,7 +46,7 @@ func New(meta *Meta) *atom {
 func (a *atom) ProcessArticlePage(_ *render.Context, page *model.ArticlePage) error {
 	item := &feeds.Item{
 		Title:       page.Article.Title,
-		Link:        &feeds.Link{Href: fmt.Sprintf("%s%s", page.Path, page.Article.ID)},
+		Link:        &feeds.Link{Href: fmt.Sprintf("%s%s%s", a.meta.BaseURL, page.Path, page.Article.ID)},
 		Description: page.Article.Description,
 		Created:     page.Article.Date,
 	}

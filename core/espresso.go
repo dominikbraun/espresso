@@ -59,7 +59,7 @@ func loadBuiltInPlugins(settings *config.Site, options *Options) []render.Plugin
 	if options.RenderRSS {
 		meta := atom.Meta{
 			Title:       settings.Title,
-			Link:        settings.BaseURL,
+			BaseURL:     settings.BaseURL,
 			Description: settings.Description,
 			Author:      settings.Author,
 			Subtitle:    settings.Subtitle,
