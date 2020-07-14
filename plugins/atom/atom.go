@@ -44,8 +44,11 @@ func New(meta *Meta) *atom {
 }
 
 func (a *atom) ProcessArticlePage(_ *render.Context, page *model.ArticlePage) error {
-	absoluteURL := fmt.
-		Sprintf("%s%s%s", a.meta.BaseURL, page.Path, page.Article.ID)
+	if page.Article.Hide {
+		return nil
+	}
+
+	absoluteURL := fmt.Sprintf("%s%s%s", a.meta.BaseURL, page.Path, page.Article.ID)
 
 	item := &feeds.Item{
 		Title:       page.Article.Title,
