@@ -12,6 +12,8 @@ import (
 	"path/filepath"
 )
 
+// Options summarizes all supported build options. They're parsed by
+// cobra and ready-to-use when passed to RunBuild.
 type Options struct {
 	OutputDir string
 	RenderRSS bool

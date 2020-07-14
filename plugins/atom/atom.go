@@ -1,3 +1,5 @@
+// Package atom provides an Atom plugin that can be used to generate
+// Atom RSS feeds.
 package atom
 
 import (
@@ -10,8 +12,11 @@ import (
 	"time"
 )
 
+// filename is the default filename for the Atom XML.
 const filename string = "atom.xml"
 
+// Meta holds all metadata for the RSS feed and should be populated
+// using the values from site.yml automatically.
 type Meta struct {
 	Title       string
 	BaseURL     string
@@ -21,11 +26,14 @@ type Meta struct {
 	Copyright   string
 }
 
+// atom stores all metadata and generates the RSS feed.
 type atom struct {
 	meta *Meta
 	feed *feeds.Feed
 }
 
+// New creates a new instance of the Atom plugin. It is fully initialized
+// using the provided metadata and thus ready to use.
 func New(meta *Meta) *atom {
 	a := atom{
 		meta: meta,
@@ -43,6 +51,8 @@ func New(meta *Meta) *atom {
 	return &a
 }
 
+// ProcessArticlePage implements render.Plugin.ProcessArticlePage and
+// generates and adds a new RSS feed entry based on the article data.
 func (a *atom) ProcessArticlePage(_ *render.Context, page *model.ArticlePage) error {
 	if page.Article.Hide {
 		return nil
@@ -62,6 +72,8 @@ func (a *atom) ProcessArticlePage(_ *render.Context, page *model.ArticlePage) er
 	return nil
 }
 
+// Finalize implements render.Plugin.Finalize and writes the RSS feed XML
+// file to the target directory stored in ctx.
 func (a *atom) Finalize(ctx *render.Context) error {
 	filePath := filepath.Join(ctx.TargetDir, filename)
 	atomFile, err := filesystem.CreateFile(filePath)
