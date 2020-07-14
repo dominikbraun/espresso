@@ -44,10 +44,14 @@ func New(meta *Meta) *atom {
 }
 
 func (a *atom) ProcessArticlePage(_ *render.Context, page *model.ArticlePage) error {
+	absoluteURL := fmt.
+		Sprintf("%s%s%s", a.meta.BaseURL, page.Path, page.Article.ID)
+
 	item := &feeds.Item{
 		Title:       page.Article.Title,
-		Link:        &feeds.Link{Href: fmt.Sprintf("%s%s%s", a.meta.BaseURL, page.Path, page.Article.ID)},
+		Link:        &feeds.Link{Href: absoluteURL},
 		Description: page.Article.Description,
+		Id:          absoluteURL,
 		Created:     page.Article.Date,
 	}
 	a.feed.Items = append(a.feed.Items, item)
