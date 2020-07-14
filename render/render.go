@@ -25,7 +25,7 @@ type Context struct {
 }
 
 // AsWebsite starts rendering the site model as an HTML-base site.
-func AsWebsite(ctx Context, site *build.Site) error {
+func AsWebsite(ctx Context, site *build.Site, plugins ...Plugin) error {
 	pages := make(chan *model.ArticlePage)
 	var wg sync.WaitGroup
 
@@ -34,19 +34,31 @@ func AsWebsite(ctx Context, site *build.Site) error {
 		go processQueue(&ctx, pages, &wg)
 	}
 
-	go streamPages(&ctx, site, pages)
+	go streamPages(&ctx, site, pages, plugins...)
 	wg.Wait()
 
 	_ = copyAssetDir(&ctx)
+
+	for _, plugin := range plugins {
+		_ = plugin.Finalize(&ctx)
+	}
 
 	return nil
 }
 
 // streamPages walks down the route tree and sends all pages through
 // the pages channel, which is used to receive and build these pages.
-func streamPages(ctx *Context, site *build.Site, pages chan<- *model.ArticlePage) {
+func streamPages(
+	ctx *Context,
+	site *build.Site,
+	pages chan<- *model.ArticlePage,
+	plugins ...Plugin,
+) {
 	site.WalkRoutes(func(r string, i *build.RouteInfo) {
 		for _, page := range i.Pages {
+			for _, plugin := range plugins {
+				_ = plugin.ProcessArticlePage(ctx, page)
+			}
 			// ToDo: Assign nav and footer in the build process
 			page.Nav = site.Nav
 			page.Footer = site.Footer

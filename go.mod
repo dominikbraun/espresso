@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
+	github.com/gorilla/feeds v1.1.1
 	github.com/mitchellh/mapstructure v1.2.2 // indirect
 	github.com/otiai10/copy v1.1.1
 	github.com/pelletier/go-toml v1.6.0 // indirect

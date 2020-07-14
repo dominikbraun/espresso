@@ -10,8 +10,12 @@ import (
 // defined in the site.yml file. It holds content-related configuration
 // values for complementing and overriding generated default values.
 type Site struct {
-	Name string
-	Nav  struct {
+	Title       string
+	Subtitle    string
+	BaseURL     string
+	Description string
+	Author      string
+	Nav         struct {
 		Items []struct {
 			Label  string
 			Target string
