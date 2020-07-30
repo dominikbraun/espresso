@@ -144,6 +144,8 @@ workflows:
           filters:
             tags:
               only: /.*/
+            branches:
+              ignore: espresso-1
       - espresso-build-releases:
           requires:
             - espresso-test
