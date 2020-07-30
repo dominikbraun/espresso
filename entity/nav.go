@@ -5,4 +5,6 @@ type Nav struct {
 }
 
 type NavItem struct {
+	Label  string
+	Target string
 }

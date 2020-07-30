@@ -5,9 +5,3 @@ type Route struct {
 	Pages  []Page
 	Index  Page
 }
-
-type Page struct {
-	Path FQN
-}
-
-type FQN string

@@ -5,4 +5,6 @@ type Footer struct {
 }
 
 type FooterItem struct {
+	Label  string
+	Target string
 }
