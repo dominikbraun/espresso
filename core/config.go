@@ -1,9 +1,13 @@
+// Package core provides entry points for Espresso commands and
+// handles the core functionality using the individual components.
 package core
 
 import (
 	"github.com/spf13/viper"
 )
 
+// Config represents the Espresso configuration provided by the
+// user in espresso.yml.
 type Config struct {
 	Site struct {
 		Meta struct {
@@ -29,6 +33,10 @@ type Config struct {
 	}
 }
 
+// ReadConfig reads a YAML, TOML or JSON configuration file from
+// the filesystem and converts it into a Config instance.
+//
+// Returns an error if the file can't be found or parsed.
 func ReadConfig(path, filename string) (Config, error) {
 	viper.AddConfigPath(path)
 	viper.SetConfigName(filename)
