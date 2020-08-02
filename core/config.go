@@ -14,7 +14,7 @@ type Config struct {
 			Title    string
 			Subtitle string
 			Author   string
-			BaseURL  string
+			Base     string
 		}
 		Nav struct {
 			Items []struct {
