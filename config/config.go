@@ -1,6 +1,5 @@
-// Package core provides entry points for Espresso commands and
-// handles the core functionality using the individual components.
-package core
+// Package config provides the global Espresso configuration.
+package config
 
 import (
 	"github.com/spf13/viper"
