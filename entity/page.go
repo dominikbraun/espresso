@@ -17,9 +17,9 @@ type Page struct {
 	Description string    // Description is a short, descriptive introduction text.
 	Content     string    // Content is the actual page content.
 	Related     []Page    // Related is a set of related Page instances.
-	relatedFQNs []FQN     // relatedFQNs is a set of FQNs defined in the `Related` Markdown section.
-	template    string    // template is an overriding template to be used for the page.
-	hide        bool      // hide indicates if the page should be visible in lists and search engines.
+	RelatedFQNs []FQN     // RelatedFQNs is a set of FQNs defined in the `Related` Markdown section.
+	Template    string    // Template is an overriding Template to be used for the page.
+	Hide        bool      // Hide indicates if the page should be visible in lists and search engines.
 }
 
 // FQN is a Fully Qualified Name for an Espresso page similar
@@ -31,6 +31,6 @@ type FQN string
 
 // Image represents a cover or social media image.
 type Image struct {
-	Src    string // Src is an image URL. A template may allow relative paths for Src.
+	Src    string // Src is an image URL. A Template may allow relative paths for Src.
 	Credit string // Credit is the image credit or copyright owner.
 }
