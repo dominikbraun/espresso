@@ -2,7 +2,9 @@
 // used to represent the entire website and its components.
 package entity
 
-import "time"
+import (
+	"time"
+)
 
 // Page represents a particular website page that is available
 // under a specific URL. Espresso will treat all Markdown files
@@ -22,12 +24,11 @@ type Page struct {
 	Hide        bool      // Hide indicates if the page should be visible in lists and search engines.
 }
 
-// FQN is a Fully Qualified Name for an Espresso page similar
-// to an absolute path consisting of a page route and a page ID.
-// Thus, a valid FQN has the form `/blog/coffee/my-espresso`.
-//
-// FQNs are the common way to uniquely identify an Espresso page.
-type FQN string
+// IndexPage is the auto-generated index page for a route.
+type IndexPage struct {
+	Page
+	Pages []Page // Pages are all neighbour- or child-pages of the index page.
+}
 
 // Image represents a cover or social media image.
 type Image struct {
