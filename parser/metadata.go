@@ -67,7 +67,7 @@ func readMetadata(metadata metadata, page *entity.Page) {
 
 // readPrimitive reads a primitive value with the provided key
 // from the metadata map. If the value is valid, readPrimitive
-// passes that value to the assigner function.
+// passes that primitive value to the assigner function.
 func readPrimitive(metadata metadata, key string, assigner assigner) {
 	if field := metadata[key]; field != nil {
 		assigner(field)
@@ -76,7 +76,7 @@ func readPrimitive(metadata metadata, key string, assigner assigner) {
 
 // readDate reads a date value with the provided key from the
 // metadata map. If the value is valid, readDate passes that
-// value to the assigner function.
+// date value to the assigner function.
 func readDate(metadata metadata, key string, assigner assigner) {
 	if field := metadata[key]; field == nil {
 		return
@@ -91,8 +91,8 @@ func readDate(metadata metadata, key string, assigner assigner) {
 }
 
 // readList reads a list value with the provided key from the
-// metadata map. If the value is valid, readList passes that
-// value to the assigner function.
+// metadata map. If the value is valid, readList passes each
+// list item to the assigner function.
 func readList(metadata metadata, key string, assigner assigner) {
 	if field := metadata[key]; field == nil {
 		return
