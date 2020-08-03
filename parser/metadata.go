@@ -1,3 +1,5 @@
+// Package parser provides a public interface for parsing files
+// and converting them to Espresso entities.
 package parser
 
 import (
@@ -10,44 +12,72 @@ const (
 )
 
 type (
+	// metadata represents a map which contains YAML keys and
+	// their corresponding values. As those values may be strings
+	// or lists, metadata stores them as `interface{}`.
 	metadata map[string]interface{}
+
+	// assigner is a function that assigns a given value `val`
+	// to a struct field. The field is an enclosed value, so
+	// assigner has be be used as a closure.
+	//
+	// assigners are used by the `readXxx` functions: They read
+	// a value from a metadata map and pass that value to the
+	// assigner, which is then responsible for assigning that
+	// value to an enclosed struct field.
 	assigner func(val interface{})
 )
 
+// readMetadata takes a metadata map and populates an Espresso
+// page with that metadata. The page instance and its fields are
+// safe to use after readMetadata has finished.
 func readMetadata(metadata metadata, page *entity.Page) {
-	mapPrimitive(metadata, "Title", func(val interface{}) {
+	readPrimitive(metadata, "Title", func(val interface{}) {
 		page.Title = val.(string)
 	})
-	mapPrimitive(metadata, "Author", func(val interface{}) {
+
+	readPrimitive(metadata, "Author", func(val interface{}) {
 		page.Author = val.(string)
 	})
-	mapDate(metadata, "Date", func(val interface{}) {
+
+	readDate(metadata, "Date", func(val interface{}) {
 		page.Date = val.(time.Time)
 	})
-	mapList(metadata, "Tags", func(val interface{}) {
+
+	readList(metadata, "Tags", func(val interface{}) {
 		page.Tags = append(page.Tags, val.(string))
 	})
-	mapPrimitive(metadata, "Description", func(val interface{}) {
+
+	readPrimitive(metadata, "Description", func(val interface{}) {
 		page.Description = val.(string)
 	})
-	mapList(metadata, "Related", func(val interface{}) {
+
+	readList(metadata, "Related", func(val interface{}) {
 		page.RelatedFQNs = append(page.RelatedFQNs, val.(entity.FQN))
 	})
-	mapPrimitive(metadata, "Template", func(val interface{}) {
+
+	readPrimitive(metadata, "Template", func(val interface{}) {
 		page.Template = val.(string)
 	})
-	mapPrimitive(metadata, "Hide", func(val interface{}) {
+
+	readPrimitive(metadata, "Hide", func(val interface{}) {
 		page.Hide = val.(bool)
 	})
 }
 
-func mapPrimitive(metadata metadata, key string, assigner assigner) {
+// readPrimitive reads a primitive value with the provided key
+// from the metadata map. If the value is valid, readPrimitive
+// passes that value to the assigner function.
+func readPrimitive(metadata metadata, key string, assigner assigner) {
 	if field := metadata[key]; field != nil {
 		assigner(field)
 	}
 }
 
-func mapDate(metadata metadata, key string, assigner assigner) {
+// readDate reads a date value with the provided key from the
+// metadata map. If the value is valid, readDate passes that
+// value to the assigner function.
+func readDate(metadata metadata, key string, assigner assigner) {
 	if field := metadata[key]; field == nil {
 		return
 	}
@@ -60,7 +90,10 @@ func mapDate(metadata metadata, key string, assigner assigner) {
 	assigner(date)
 }
 
-func mapList(metadata metadata, key string, assigner assigner) {
+// readList reads a list value with the provided key from the
+// metadata map. If the value is valid, readList passes that
+// value to the assigner function.
+func readList(metadata metadata, key string, assigner assigner) {
 	if field := metadata[key]; field == nil {
 		return
 	}
