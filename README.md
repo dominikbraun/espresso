@@ -1,3 +1,5 @@
+**_Deprecation notice:_ Espresso is deprecated, use its successor [verless](https://github.com/verless/verless) instead.**
+
 ![Espresso Static Site Generator](https://sternentstehung.de/espresso-ssg-logo.png)
 <br /><br />
 [![CircleCI](https://circleci.com/gh/dominikbraun/espresso.svg?style=shield)](https://circleci.com/gh/dominikbraun/espresso)
