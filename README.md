@@ -1,4 +1,6 @@
-**_Deprecation notice:_ Espresso is deprecated, use its successor [verless](https://github.com/verless/verless) instead.**
+---
+## _Deprecation notice:_ Espresso is deprecated, use its successor [verless](https://github.com/verless/verless) instead.
+---
 
 ![Espresso Static Site Generator](https://sternentstehung.de/espresso-ssg-logo.png)
 <br /><br />
